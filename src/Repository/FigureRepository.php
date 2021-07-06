@@ -19,6 +19,19 @@ class FigureRepository extends ServiceEntityRepository
         parent::__construct($registry, Figure::class);
     }
 
+    public function findFigurePagination($limit, $offset)
+    {
+        return $this->createQueryBuilder('f')
+            // ->andWhere('c.Figure = :val')
+            // ->setParameter('val', $value)
+            ->orderBy('f.createAt', 'DESC')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Figure[] Returns an array of Figure objects
     //  */

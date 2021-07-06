@@ -4,6 +4,7 @@
 {% block stylesheet %}
     <link rel="stylesheet" href="{{asset("css/figures.css")}}">
 {% endblock %}
+
 {% block body %}
     <div class="row rowHome mt-5 mb-5">
         <div class="col-lg-12 text-center">
@@ -46,11 +47,10 @@
 
 {% endblock %}
 {% block javascripts %}
-    <script src="{{ asset("js/seemore.js") }}"></script>
-    <script src="{{ asset("js/ajaxFigure.js") }}"></script>
+    {# <script src="{{ asset("js/seemore.js") }}"></script> #}
+    <script src="{{ asset("JS/AjaxFigure.js") }}"></script>
     <script>
         {# let seeMome = new Seemore("elementsFigure", 8, "seeMoreButton"); #}
-        let ajaxFigure = new AjaxFigure('http://projet-6/figure/ajax/figure' ,'seeMoreFigure');
+        let ajaxFigure = new AjaxFigure('http://p6-symfony/figure/ajax/figure' ,'seeMoreFigure');
     </script>
-
 {% endblock %}
