@@ -1,0 +1,150 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{asset('css/figures.css')}}">
+    <link rel="stylesheet" href="{{ asset('css/slider.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-8">
+
+            {# Gestion du slider d'images #}
+            <div class="slideshow-container">
+                <div class="row">
+                    {# {% if app.user %} #}
+                        <div class="col-lg-12 text-right mb-2">
+                            <a class="btn btn-primary" href="{{path('editFigure', {'id':figure.id} )}}">Edit</a>
+                        </div>
+                    {# {% endif %} #}
+                </div>
+
+                {# On place en premier l'image principale #}
+                <div class="mySlides fade">
+                    <img src="{{ asset(figure.mainVisuel.url) }}" alt="" style="width:100%">
+                </div>
+                
+                {# On ajoute les autres images sans remettre l'image principale #}
+                {% for visuelFigure in figure.visuelFigures %}
+                    {% if visuelFigure.id != figure.mainVisuel.id %}
+
+                        {% if visuelFigure.type == "video" %}
+                            <div class="mySlides fade">
+                                <embed src="{{ asset(visuelFigure.url) }}" type="video/webm" style="width:100%; min-height:600px; height:60%;">
+                                {# <img src="{{ asset(visuelFigure.url) }}" style="width:100%" > #}
+                            </div>
+                        {% else %}
+                            <div class="mySlides fade">
+                                <img src="{{ asset(visuelFigure.url) }}" style="width:100%" >
+                            </div>
+                        {% endif %}
+                        
+                    {% endif %}
+                {% endfor %}
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            </div>
+
+            {# Gestion des dots #}
+            <div style="text-align:center" class="row mt-3 ml-0 mr-0 justify-content-between">
+        
+                {# On place en premier la main puis les autres #}
+                <div class="dot-img col-lg-2" onclick="currentSlide(1)" style="background-image:url( {{ asset(figure.mainVisuel.url) }}"></div>
+
+                {% set index = 2 %}
+                {% for visuelFigure in figure.visuelFigures %}
+
+                    {% if visuelFigure.id != figure.mainVisuel.id %}
+                        {% if visuelFigure.type == "picture" %}
+                            <div class="dot-img col-lg-2" onclick="currentSlide({{index}})" style="background-image:url( {{ asset(visuelFigure.url) }}"></div>
+                        {% else %}
+                            <div class="dot-img dotImgVideo col-lg-2" onclick="currentSlide({{index}})" style="background-image:url( {{asset(visuelFigure.url) }} )"></div>
+                        {% endif %}
+
+                    {% else %}
+                        {% set index = index - 1 %}
+                    {% endif %}
+                        {% set index = index + 1 %}
+                {% endfor %}
+
+            </div>
+
+            {# Texte de la figure #}
+            <div class="row justify-content-center mt-3 mb-5">
+                <div class="col-lg-12">
+                    {{figure.content | raw}}
+                </div>
+            </div>
+
+            {# Gestion des informations #}
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="row justify-content-between">
+                        <div class="col-lg-3 text-left">
+                            <p>Crée le {{figure.createAt | date('d-m-Y') }}</p>
+                        </div>
+                        <div class="col-lg-3 text-center">
+                            <p>Groupe : Lorem</p>
+                        </div>
+                        <div class="col-lg-3 text-right">
+                            <p>Modifié :{{ figure.updateAt | date('d-m-Y') }} </p>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+
+            {% if app.user %}
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-12">
+                    {{form_start(formComment)}}
+
+                    {{form_row(formComment.value, {'attr': { 'placeholder' : 'Votre commentaire'}, 'label' : 'Envoyer un message ci dessous : '} ) }}
+                    {# {{form_row(formComment.save, {"val":"Participer"} )}} #}
+                    <button type="submit" class="btn btn-primary"> Participer</button>
+
+                    {{form_end(formComment)}}
+                </div>
+            </div>
+            {% else %}
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <h4>Il faut être connecté afin de participer à la discussion.</h4>
+                    <div class="row">
+                        <div class="col-lg-10">
+                            {# <button class="btn btn-success"><a href=" {{ path('security_login') }} "></a>Connexion</button> #}
+                            {# <button  class="btn btn-primary"><a href=" {{ path('security_registration') }} "></a>Inscription</button> #}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            <div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <h4>Messages</h4>
+                    <div class="col-lg-12 pl-0" id="comments">
+                        {# {% for comment in figure.comments %}
+                            <p>{{comment.user.username | raw }} - {{comment.value | raw}}</p>
+                        {% endfor %} #}
+                    </div>
+                    <button class="btn btn-outline-primary" id="buttonSeeMoreComments">Voir plus</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="{{ asset('js/slider.js') }}"></script>
+    <script src="{{ asset('js/ajaxComment.js') }}"></script>
+    <script>
+        let comment = new AjaxComment('http://projet-6/figure/ajax/comment', 'buttonSeeMoreComments');
+    </script>
+{% endblock %}
+
+
+
+
+
