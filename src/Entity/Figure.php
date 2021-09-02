@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FigureRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -51,7 +53,24 @@ class Figure
      * @ORM\ManyToOne(targetEntity=GroupeFigure::class, inversedBy="figures")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $Groupe;
+    private $groupe;
+
+    /**
+     * @ORM\OneToMany(targetEntity=VisuelFigure::class, mappedBy="figure", orphanRemoval=true)
+     */
+    private $visuelFigures;
+
+    /**
+     * @ORM\OneToOne(targetEntity=VisuelFigure::class, cascade={"persist", "remove"})
+     */
+    private $mainVisuel;
+
+    public $mainVisuel2;
+
+    public function __construct()
+    {
+        $this->visuelFigures = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -133,12 +152,12 @@ class Figure
 
     public function getGroupe(): ?GroupeFigure
     {
-        return $this->Groupe;
+        return $this->groupe;
     }
 
-    public function setGroupe(?GroupeFigure $Groupe): self
+    public function setGroupe(?GroupeFigure $groupe): self
     {
-        $this->Groupe = $Groupe;
+        $this->groupe = $groupe;
 
         return $this;
     }
@@ -150,4 +169,47 @@ class Figure
 
         return $slug;
     }
+
+    /**
+     * @return Collection|VisuelFigure[]
+     */
+    public function getVisuelFigures(): Collection
+    {
+        return $this->visuelFigures;
+    }
+
+    public function addVisuelFigure(VisuelFigure $visuelFigure): self
+    {
+        if (!$this->visuelFigures->contains($visuelFigure)) {
+            $this->visuelFigures[] = $visuelFigure;
+            $visuelFigure->setFigure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisuelFigure(VisuelFigure $visuelFigure): self
+    {
+        if ($this->visuelFigures->removeElement($visuelFigure)) {
+            // set the owning side to null (unless already changed)
+            if ($visuelFigure->getFigure() === $this) {
+                $visuelFigure->setFigure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMainVisuel(): ?VisuelFigure
+    {
+        return $this->mainVisuel;
+    }
+
+    public function setMainVisuel(?VisuelFigure $mainVisuel): self
+    {
+        $this->mainVisuel = $mainVisuel;
+
+        return $this;
+    }
+
 }
