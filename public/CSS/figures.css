@@ -6,6 +6,9 @@ h5.card-title a{
 h4.card-title a:hover{
     color:grey;
 }
+.elementsFigure a:hover{
+    text-decoration: none !important;
+}
 
 .card-header h5{
     color : #FFFFFF;

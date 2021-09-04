@@ -55,10 +55,10 @@ class HomeController extends AbstractController
                 'titleGroupe'=>$groupe->getTitle()
             ];
 
-            // $mainVisuel = $figure->getMainVisuel();
-            // if($mainVisuel != null){
-            //     $data['mainVisuel'] = $mainVisuel->getUrl();
-            // }
+            $mainVisuel = $figure->getMainVisuel();
+            if($mainVisuel != null){
+                $data['mainVisuel'] = $mainVisuel->getUrl();
+            }
 
             array_push($figuresData, $data);
         }
