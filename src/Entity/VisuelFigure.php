@@ -19,7 +19,7 @@ class VisuelFigure
 
     /**
      * @ORM\ManyToOne(targetEntity=Figure::class, inversedBy="visuelFigures")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $figure;
 

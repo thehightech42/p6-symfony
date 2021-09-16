@@ -15,14 +15,16 @@
                     {# {% if app.user %} #}
                         <div class="col-lg-12 text-right mb-2">
                             <a class="btn btn-primary" href="{{path('editFigure', {'id':figure.id} )}}">Edit</a>
+                            <a class="btn btn-primary" id="deleteButton" href="{{path('deleteFigure', {'id':figure.id} )}}">Supprimer</a>
                         </div>
                     {# {% endif %} #}
                 </div>
 
-                {# On place en premier l'image principale #}
-                <div class="mySlides fade">
-                    <img src="{{ asset(figure.mainVisuel.url) }}" alt="" style="width:100%">
-                </div>
+                {% if figure.visuelFigures is defined and figure.visuelFigures is not null and figure.visuelFigures|length > 0 %}
+                    {# On place en premier l'image principale #}
+                    <div class="mySlides fade">
+                        <img src="{{ asset(figure.mainVisuel.url) }}" alt="" style="width:100%">
+                    </div>
                 
                 {# On ajoute les autres images sans remettre l'image principale #}
                 {% for visuelFigure in figure.visuelFigures %}
@@ -50,6 +52,7 @@
         
                 {# On place en premier la main puis les autres #}
                 <div class="dot-img col-lg-2" onclick="currentSlide(1)" style="background-image:url( {{ asset(figure.mainVisuel.url) }}"></div>
+                
 
                 {% set index = 2 %}
                 {% for visuelFigure in figure.visuelFigures %}
@@ -68,6 +71,9 @@
                 {% endfor %}
 
             </div>
+            {% else %}
+                </div>
+            {% endif %}
 
             {# Texte de la figure #}
             <div class="row justify-content-center mt-3 mb-5">
@@ -139,6 +145,7 @@
 {% block javascripts %}
     <script src="{{ asset('js/slider.js') }}"></script>
     <script src="{{ asset('js/ajaxComment.js') }}"></script>
+    <script src="{{ asset('js/deleteFigure.js') }}"></script>
     <script>
         let comment = new AjaxComment('http://projet-6/figure/ajax/comment', 'buttonSeeMoreComments');
     </script>

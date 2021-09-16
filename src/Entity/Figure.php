@@ -57,11 +57,13 @@ class Figure
 
     /**
      * @ORM\OneToMany(targetEntity=VisuelFigure::class, mappedBy="figure", orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $visuelFigures;
 
     /**
      * @ORM\OneToOne(targetEntity=VisuelFigure::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $mainVisuel;
 

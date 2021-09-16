@@ -41,7 +41,6 @@ function addVideo(){
 let deleteElement = 1; 
 let allElementsPictures = document.getElementsByClassName('imgAvailable');
 
-
 function deleteFigure(idFigure, type){
     if(allElementsPictures.length > 1 || type != 'img'){
 
@@ -67,6 +66,8 @@ function deleteFigure(idFigure, type){
 }
 
 
+
+// Modification de l'url pour les miniatures des vidéos. 
 function urlVideoToPicture(url){
     console.log(typeof(url));
     url = url.replace('www', 'img'); 
