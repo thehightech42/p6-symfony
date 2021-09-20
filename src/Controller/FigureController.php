@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -41,6 +42,14 @@ class FigureController extends AbstractController
                      ->add('mainVisuel2')
                      ->getForm();
 
+        // if(!$groupe){
+        //     $groupe = new GroupeFigure;
+        // }
+        // $formGroupe = $this->createFormBuilder($groupe)
+        //             ->add('title', TextType::class)
+        //             ->add('description', TextType::class)
+        //             ->getForm();
+        
         $formFigure->handleRequest($request);
 
         if($formFigure->isSubmitted() && $formFigure->isValid()){
@@ -137,6 +146,7 @@ class FigureController extends AbstractController
 
         return $this->render('figure/newFigure.html.twig', [
             'formFigure'=>$formFigure->createView(),
+            // 'formGroupe'=>$formGroupe->createView(),
             'figure'=>$figure
         ]);
     }
@@ -162,4 +172,22 @@ class FigureController extends AbstractController
         $manager->flush();
         return $this->redirectToRoute('home');
     }
+
+    /**
+     * @Route("/figure/ajax/addGroupeFigure", name="addGroupeFigure")
+     */
+
+     public function addGroupeFigure( Request $request, EntityManagerInterface $manager) 
+     {
+        $groupe = new GroupeFigure(); 
+        $groupe->setTitle($request->get('title')); 
+        $groupe->setDescription($request->get('description'));
+
+        $manager->persist($groupe);
+        $manager->flush();
+        
+        $jsonData['id'] = $groupe->getId();  
+
+        return new JsonResponse($jsonData);
+     }
 }

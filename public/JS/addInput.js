@@ -69,7 +69,7 @@ function deleteFigure(idFigure, type){
 
 // Modification de l'url pour les miniatures des vidéos. 
 function urlVideoToPicture(url){
-    console.log(typeof(url));
+    // console.log(typeof(url));
     url = url.replace('www', 'img'); 
     url = url.replace('embed','vi');
     url = url.replace( "\")", "/mqdefault.jpg\")") 

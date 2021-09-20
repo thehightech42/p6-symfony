@@ -21,11 +21,19 @@
     </div>
     <div class="row">
         <div class="col-lg-10 m-auto">
-
+        
             {{ form_start(formFigure, {'method':'post', 'multipart':true}) }}
                 {% do formFigure.mainVisuel2.setRendered() %}
 
             {{ form_row(formFigure.groupe) }}
+
+            <!-- Button trigger modal -->
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAddGroupeFigure">
+                    Ajouter un nouveau groupe
+                </button>
+            </div>
+            
 
             {{ form_row(formFigure.title, {
                 'attr':{
@@ -119,13 +127,41 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="modalAddGroupeFigure" tabindex="-1" role="dialog" aria-labelledby="modalAddGroupeFigureLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddGroupeFigureLabel">Ajouter un nouveau groupe de figure</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <input type="text" id="titleGroupe" class="form-control" placeholder="Titre du groupe">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="descriptionGroupe" class="form-control" placeholder="Description du groupe">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btnAddGroupe">Ajouter</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
 {% endblock %}
 
 
 {% block javascripts %}
     {# <script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.4.25/jodit.min.js"></script> #}
     <script src="{{asset('js/addInput.js')}}"></script>
-    
+    <script src="{{asset('js/ajaxGroupe.js')}}"></script>    
     {# <script type="text/javascript" src="https://cdn.tiny.cloud/1/xan0xqgn36elll0x9xwtm3pzch1knjm4m9byc6zt3iu7ogzn/tinymce/5/tinymce.min.js" breferrerpolicy="origin"></script> #}
     {# <script src="{{ asset('js/importJodit.js') }}"></script> #}
 {% endblock %}
