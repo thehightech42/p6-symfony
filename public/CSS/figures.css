@@ -1,0 +1,73 @@
+h5.card-title a{
+    color: #FFFFFF;
+    text-align: justify !important;
+}
+
+h4.card-title a:hover{
+    color:grey;
+}
+.elementsFigure a:hover{
+    text-decoration: none !important;
+}
+
+.card-header h5{
+    color : #FFFFFF;
+}
+img.mainImgIndex{
+    width: auto;
+    height: auto;
+    max-width: 100%;
+}
+
+.listingImg{
+    width: 100px !important;
+    height: 100px !important;
+}
+
+.hiddenHome{
+    display:none;
+}
+
+.hidden{
+    display:none;
+}
+
+.imgLabelFigure{
+    width: 200px;
+    height: 170px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.videoLabelFigure{
+    width: 200px;
+    height: 170px;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+input:checked ~ label{
+    border: rgb(100,150,250) solid 5px;
+}
+
+#mainVisuel{
+    max-width: 100%;
+}
+
+.fa-trash{
+    color: rgb(253, 188, 126);
+    transition: 0.5s; 
+    margin-left: -5%;
+}
+.fa-trash:hover{
+    cursor: pointer;
+    transition: 0.5s;
+    color: rgb(223, 164, 92)
+}
+
+
+footer div.row{
+    max-width: 100% !important;
+}

@@ -1,0 +1,167 @@
+{% extends 'base.html.twig' %}
+{% form_theme formFigure 'bootstrap_4_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{asset('css/figures.css')}}">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jodit/3.4.25/jodit.min.css">
+{% endblock %}
+
+
+
+{% block body %}
+
+    <div class="row mt-5">
+        <div class="col-lg-10 m-auto text-center">
+        {% if figure.title == "" %}
+            <h1>Ajouter une nouvelle figure</h1> 
+        {% else %}
+            <h1>Modifier la figure : {{figure.title}}</h1> 
+        {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-10 m-auto">
+        
+            {{ form_start(formFigure, {'method':'post', 'multipart':true}) }}
+                {% do formFigure.mainVisuel2.setRendered() %}
+
+            {{ form_row(formFigure.groupe) }}
+
+            <!-- Button trigger modal -->
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAddGroupeFigure">
+                    Ajouter un nouveau groupe
+                </button>
+            </div>
+            
+
+            {{ form_row(formFigure.title, {
+                'attr':{
+                    'placeholder' : 'Ecrit ici son petit nom ;)'
+                },
+                'label' : 'Titre' 
+            }) }}
+
+            {{ form_row(formFigure.shortDescription, {
+                'attr':{
+                    'placeholder' : 'Quelques mots pour comprendre rapidement'
+                },
+                'label' : 'Courte description' 
+            }) }}
+
+            {{ form_row(formFigure.content, {
+                'attr':{
+                    'placeholder' : 'Décrivez ici la figure. Les points de difficultés, ...  ;)',
+                    'class':'WISIWYGEditor'
+                },
+                'label' : 'Description de la figure' 
+            }) }}
+            
+            {% if figure.visuelFigures is defined %}
+                    <div class="form-group">
+                        <label for="">Sélection de la photo de couverture : </label>
+                        <div class="row">
+
+                {% for visuelFigure in figure.visuelFigures %}
+                    {% if visuelFigure.type != "video" %}
+                        <div class="col-lg-3 imgAvailable" id="col-{{visuelFigure.id}}">
+                            <input type="radio" class="btn-check hidden" name="form[mainVisuel2]" id="{{visuelFigure.id}}" value="{{visuelFigure.id}}" autocomplete="off" 
+                            {% if visuelFigure.id == figure.mainVisuel.id %}
+                            checked 
+                            {% endif %}
+                            >
+                            <label class="imgLabelFigure" style="background-image:url( {{ asset(visuelFigure.url) }} );" for="{{visuelFigure.id}}"></label>
+                            <i class="fas fa-trash fa-2x" onclick="deleteFigure({{visuelFigure.id}}, 'img')"></i>
+                        </div> 
+                    {% endif %}    
+                {% endfor %}
+
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if figure.visuelFigures is defined %}
+                    <div class="form-group">
+                        <label for="">Gestion des vidéos : </label>
+                        <div class="row">
+
+                {% for visuelFigure in figure.visuelFigures %}
+                    {% if visuelFigure.type == "video" %}
+                        <div class="col-lg-3 videoAvailable" id="col-{{visuelFigure.id}}">
+                            {# <input type="radio" class="btn-check hidden" name="form[mainVisuel2]" id="{{visuelFigure.id}}" value="{{visuelFigure.id}}" autocomplete="off" 
+                            {% if visuelFigure.id == figure.mainVisuel.id %}
+                            checked 
+                            {% endif %}
+                            > #}
+                            <div class="videoLabelFigure checkVideo" style="display: inline-block; background-image:url( {{ asset(visuelFigure.url) }} );" for="{{visuelFigure.id}}"></div>
+                            <i class="fas fa-trash fa-2x" onclick="deleteFigure({{visuelFigure.id}}, 'video')"></i>
+                        </div> 
+                    {% endif %}    
+                {% endfor %}
+
+                    </div>
+                </div>
+            {% endif %}
+            <div id="BlocInputVisuel">
+
+            </div>
+
+            <div class="form-group">
+                <button type="button" class="btn btn-secondary" onclick="addPicture()">Ajouter une photo</button>
+                <button type="button" class="btn btn-primary" onclick="addVideo()">Ajouter une vidéo</button>
+                {% if figure.title == "" %}
+                    <p>La premier photo sera utilisé comme photo de couverture de figure.</p>
+                {% endif %}
+                
+            </div>
+
+            {{ form_row(formFigure.save, {
+                'attr':{
+                    'class':'btn btn-info'
+                },
+                'label' : 'Enregistrer' 
+            }) }}
+
+            {{form_end(formFigure) }}
+
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAddGroupeFigure" tabindex="-1" role="dialog" aria-labelledby="modalAddGroupeFigureLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddGroupeFigureLabel">Ajouter un nouveau groupe de figure</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <input type="text" id="titleGroupe" class="form-control" placeholder="Titre du groupe">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="descriptionGroupe" class="form-control" placeholder="Description du groupe">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btnAddGroupe">Ajouter</button>
+            </div>
+            </div>
+        </div>
+        </div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {# <script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.4.25/jodit.min.js"></script> #}
+    <script src="{{asset('js/addInput.js')}}"></script>
+    <script src="{{asset('js/ajaxGroupe.js')}}"></script>    
+    {# <script type="text/javascript" src="https://cdn.tiny.cloud/1/xan0xqgn36elll0x9xwtm3pzch1knjm4m9byc6zt3iu7ogzn/tinymce/5/tinymce.min.js" breferrerpolicy="origin"></script> #}
+    {# <script src="{{ asset('js/importJodit.js') }}"></script> #}
+{% endblock %}
