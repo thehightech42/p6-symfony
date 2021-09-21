@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-8">
+            <h1 class="mb-5">Formulaire d'inscription :</h1>
+
+            {{ form_start(form) }}
+
+            {{ form_row(form.username, {
+                'label' : 'Nom d\'utilisateur ', 
+                'attr' : {
+                    'placeholder' : 'Votre nom visible sur le site'
+                }
+            }) }}
+            {{ form_row(form.email, {
+                'label' : 'Email ', 
+                'attr' : {
+                    'placeholder' : 'L\'adresse email qui sera utilisé pour vous identifier'
+                }
+            }) }}
+            {{ form_row(form.password, {
+                'label' : 'Mot de passe ', 
+                'attr' : {
+                    'placeholder' : 'Merci de saisir un mot de passe complex avec Minuscule, Majuscule, Chiffre et caratère spéciaux'
+                }
+            }) }}
+            {{ form_row(form.confirm_password, {
+                'label' : 'Confirmation mot de passe ', 
+                'attr' : {
+                    'placeholder' : 'Merci de saisir une deuxième fois votre mot de passe par sécurité'
+                }
+            }) }}
+
+            <button type="submit" class="btn btn-primary mt-5"> INSCRIPTION</button>
+
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+    
+
+{% endblock %}
