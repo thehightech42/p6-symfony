@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+    <div class="row justify-content-center mt-5 ">
+        <div class="col-lg-10 m-auto">
+            <h1 class="mb-3">Mon compte</h1>
+
+            <div class="row justify-content-between">
+                <div class="col-lg-5">
+                    <h3 class="mb-3">Mes informations personnel</h3>
+                    {{form_start(formUser)}}
+                    {{ form_row(formUser.email, {
+                        'label' : 'Email ', 
+                        'small' : 'L\'email sera utilisé comme moyen de contact et identifiant de connexion',
+                        'attr' : {
+                            'placeholder' : 'Votre email de connexion'
+                        }
+                    }) }}
+                    {{ form_row(formUser.username, {
+                        'label' : 'Nom d\'utilisateur ', 
+                        'attr' : {
+                            'placeholder' : 'Votre nom visible sur le site'
+                        }
+                    }) }}
+                    {{ form_row(formUser.save, {
+                        'label' : 'Enregistrer les changements',  
+                        'attr' : {
+                            'class' : 'btn btn-info'
+                        }
+                    }) }}
+                    {{form_end(formUser)}}
+                </div>
+                <div class="col-lg-5">
+                <h3 class="mb-3">Changer de mot de passe</h3>
+                    {{form_start(formPassword)}}
+                    {{ form_row(formPassword.username) }}
+                    {{ form_row(formPassword.email) }}
+                    {{ form_row(formPassword.oldPassword, {
+                        'label' : ' Ancien mot de passe',
+                        'attr' : {
+                            'placeholder' : 'Votre ancien mot de passe'
+                        }
+                    }) }}
+                    {{ form_row(formPassword.newPassword) }}
+                    
+                    {{ form_row(formPassword.save, {
+                        'label' : 'Enregistrer le changement de mot de passe',  
+                        'attr' : {
+                            'class' : 'btn btn-info'
+                        }
+                    }) }}
+                    {{form_end(formPassword)}}
+                </div>
+                
+
+                
+            </div>
+            
+        </div>
+    </div>
+
+{% endblock %}
