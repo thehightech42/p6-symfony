@@ -20,18 +20,13 @@
                     'placeholder' : 'L\'adresse email qui sera utilisé pour vous identifier'
                 }
             }) }}
-            {{ form_row(form.password, {
-                'label' : 'Mot de passe ', 
-                'attr' : {
-                    'placeholder' : 'Merci de saisir un mot de passe complex avec Minuscule, Majuscule, Chiffre et caratère spéciaux'
-                }
-            }) }}
-            {{ form_row(form.confirm_password, {
+            {{ form_row(form.password) }}
+            {# {{ form_row(form.confirm_password, {
                 'label' : 'Confirmation mot de passe ', 
                 'attr' : {
                     'placeholder' : 'Merci de saisir une deuxième fois votre mot de passe par sécurité'
                 }
-            }) }}
+            }) }} #}
 
             <button type="submit" class="btn btn-primary mt-5"> INSCRIPTION</button>
 

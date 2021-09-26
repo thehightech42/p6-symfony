@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
 class RegistrationType extends AbstractType
 {
@@ -15,8 +16,14 @@ class RegistrationType extends AbstractType
         $builder
             ->add('email')
             ->add('username')
-            ->add('password', PasswordType::class)
-            ->add('confirm_password', PasswordType::class)
+            ->add('password', RepeatedType::class, [
+                'type'=>PasswordType::class,
+                'invalid_message'=> "Les mots de saisis ne sont pas les mêmes", 
+                'options'=>['attr' => ['class'=>'password-field']],
+                'required'=>true,
+                'first_options'=>['label'=>'Mot de passe', 'attr' => ['placeholder'=>'Votre mot de passe']],
+                'second_options'=>['label'=>'Confirmation Mot de passe', 'attr' => ['placeholder'=>'Confirmer votre mot de passe']]
+            ])
         ;
     }
 

@@ -42,11 +42,17 @@ class User implements UserInterface
      */
     private $password;
 
+    public $oldPassword;
 
     /**
-     * @Assert\EqualTo(propertyPath = "password", message = "Vos mots de passe ne sont identitique.")
+     * @Assert\Regex(
+     *     pattern     = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/i",
+     *     message = " Votre mot de passe doit contenir 8 caractères au minimun avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
+     * )
      */
-    public $confirm_password;
+    public $newPassword;
+
+    
 
     public function getId(): ?int
     {

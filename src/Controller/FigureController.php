@@ -42,14 +42,6 @@ class FigureController extends AbstractController
                      ->add('mainVisuel2')
                      ->getForm();
 
-        // if(!$groupe){
-        //     $groupe = new GroupeFigure;
-        // }
-        // $formGroupe = $this->createFormBuilder($groupe)
-        //             ->add('title', TextType::class)
-        //             ->add('description', TextType::class)
-        //             ->getForm();
-        
         $formFigure->handleRequest($request);
 
         if($formFigure->isSubmitted() && $formFigure->isValid()){
