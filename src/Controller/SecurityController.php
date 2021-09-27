@@ -2,11 +2,16 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\User;
 use App\Form\RegistrationType;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Form\FormError;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,7 +38,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/inscription", name="security_registration")
      */
-    public function registration(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder){
+    public function registration(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, MailerInterface $mailer){
 
         $user = new User;
 
@@ -48,13 +53,14 @@ class SecurityController extends AbstractController
             $manager->flush();
 
             return $this->redirectToRoute('security_login');
+       
         }
-
         return $this->render('security/registration.html.twig', [
             'form'=>$form->createView()
         ]);
 
     }
+
 
     /**
      * @Route("/mon-compte", name="security_myaccount")

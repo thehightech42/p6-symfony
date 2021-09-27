@@ -100,17 +100,7 @@
             </div>
 
             {% if app.user %}
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-12">
-                    {{form_start(formComment)}}
-
-                    {{form_row(formComment.value, {'attr': { 'placeholder' : 'Votre commentaire'}, 'label' : 'Envoyer un message ci dessous : '} ) }}
-                    {# {{form_row(formComment.save, {"val":"Participer"} )}} #}
-                    <button type="submit" class="btn btn-primary"> Participer</button>
-
-                    {{form_end(formComment)}}
-                </div>
-            </div>
+            
             {% else %}
             <div class="row justify-content-center">
                 <div class="col-lg-12">
