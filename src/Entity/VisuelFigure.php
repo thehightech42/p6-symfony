@@ -18,7 +18,7 @@ class VisuelFigure
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Figure::class, inversedgitBy="visuelFigures")
+     * @ORM\ManyToOne(targetEntity=Figure::class, inversedBy="visuelFigures")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $figure;
