@@ -52,6 +52,11 @@ class User implements UserInterface
      */
     public $newPassword;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $confirmEmail;
+
     
 
     public function getId(): ?int
@@ -95,6 +100,18 @@ class User implements UserInterface
         return $this;
     }
 
+    public function getConfirmEmail(): ?bool
+    {
+        return $this->confirmEmail;
+    }
+
+    public function setConfirmEmail(bool $confirmEmail): self
+    {
+        $this->confirmEmail = $confirmEmail;
+
+        return $this;
+    }
+
     
     /**
      * Add for implements userInterface
@@ -106,6 +123,8 @@ class User implements UserInterface
     public function getSalt(){}
 
     public function eraseCredentials(){}
+
+    
 
 
 }

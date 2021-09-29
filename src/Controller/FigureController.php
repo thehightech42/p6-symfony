@@ -71,7 +71,7 @@ class FigureController extends AbstractController
 
                 $baseName = 'uploads/img/'.md5(uniqid()).'.'.end($extension);
                 $newFileName = str_replace('\\', '/', $this->getParameter('upload_directory').'/'.$baseName);
-                // var_dump($newFileName);
+
                 try{
                     move_uploaded_file($_FILES[$name]['tmp_name'], $newFileName);
                 }catch (\Execption $e) {
@@ -85,18 +85,11 @@ class FigureController extends AbstractController
 
                 $manager->persist($newImg);
 
-                // var_dump($newImg);
-                var_dump($figure->getVisuelFigures());
-                // var_dump($f);
-                // var_dump($figure); 
-
                 if($f === 1 && $figure->getVisuelFigures()->isEmpty() ){
-                // if($f === 1 ){
-                    var_dump('test');
+
                     $figure->setMainVisuel($newImg);
                 }
-                // var_dump($figure);
-                // $manager->persist($newImg);
+
             }
             
 
@@ -138,7 +131,6 @@ class FigureController extends AbstractController
 
         return $this->render('figure/newFigure.html.twig', [
             'formFigure'=>$formFigure->createView(),
-            // 'formGroupe'=>$formGroupe->createView(),
             'figure'=>$figure
         ]);
     }
@@ -160,7 +152,12 @@ class FigureController extends AbstractController
      */
     public function deleteFigure(Figure $figure, EntityManagerInterface $manager): Response
     {
-        $manager->remove($figure); 
+        foreach($figure->getVisuelFigures() as $visuelFigure){
+            unlink($visuelFigure->getUrl());
+        }
+
+        $manager->remove($figure);
+
         $manager->flush();
         return $this->redirectToRoute('home');
     }

@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheet %}
-    <link rel="stylesheet" href="{{asset('css/figures.css')}}">
-    <link rel="stylesheet" href="{{ asset('css/slider.css') }}">
+    <link rel="stylesheet" href="{{asset('CSS/figures.css')}}">
+    <link rel="stylesheet" href="{{ asset('CSS/slider.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -131,13 +131,12 @@
 
 {% endblock %}
 
-
 {% block javascripts %}
-    <script src="{{ asset('js/slider.js') }}"></script>
-    <script src="{{ asset('js/ajaxComment.js') }}"></script>
-    <script src="{{ asset('js/deleteFigure.js') }}"></script>
+    <script src="{{ asset('JS/slider.js') }}"></script>
+    <script src="{{ asset('JS/ajaxComment.js') }}"></script>
+    <script src="{{ asset('JS/deleteFigure.js') }}"></script>
     <script>
-        let comment = new AjaxComment('http://projet-6/figure/ajax/comment', 'buttonSeeMoreComments');
+        let comment = new AjaxComment('{{ path("ajaxFigurePagination") }}', 'buttonSeeMoreComments');
     </script>
 {% endblock %}
 

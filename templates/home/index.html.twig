@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block stylesheet %}
-    <link rel="stylesheet" href="{{asset("css/figures.css")}}">
+    <link rel="stylesheet" href="{{asset("CSS/figures.css")}}">
 {% endblock %}
 
 {% block body %}
@@ -47,9 +47,9 @@
 {% endblock %}
 {% block javascripts %}
     {# <script src="{{ asset("js/seemore.js") }}"></script> #}
-    <script src="{{ asset("JS/AjaxFigure.js") }}"></script>
+    <script src="{{ asset("/JS/AjaxFigure.js") }}"></script>
     <script>
         {# let seeMome = new Seemore("elementsFigure", 8, "seeMoreButton"); #}
-        let ajaxFigure = new AjaxFigure('http://p6-symfony/figure/ajax/figure' ,'seeMoreFigure');
+        let ajaxFigure = new AjaxFigure('https://p6-symfony.numeriquesimple.fr/figure/ajax/figure' ,'seeMoreFigure');
     </script>
 {% endblock %}

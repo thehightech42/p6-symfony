@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use DateTime;
 use App\Entity\User;
+use App\Entity\Token;
 use App\Form\RegistrationType;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Address;
@@ -39,7 +40,7 @@ class SecurityController extends AbstractController
      * @Route("/inscription", name="security_registration")
      */
 
-    public function registration(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder){
+    public function registration(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, MailerInterface $mailer){
 
 
         $user = new User;
@@ -50,9 +51,27 @@ class SecurityController extends AbstractController
         if ($form->isSubmitted() && $form->isValid() ) {
             $hash = $encoder->encodePassword($user, $user->getPassword()); 
             $user->setPassword($hash); 
+            $user->setConfirmEmail(false);
 
             $manager->persist($user);
+            
+            $token = new Token($user);
+            $manager->persist($token);
+            // var_dump($token);
+
             $manager->flush();
+
+            $email = (new TemplatedEmail())
+                        ->from('no-reply@p6-symfony.numeriquesimple.fr')
+                        ->to( $user->getEmail() )
+                        ->subject('Confirmation Email')
+                        ->htmlTemplate('security/email/email_signIn.html.twig')
+                        ->context([
+                            'urlConfirmEmailWithToken'=> $this->generateUrl("security_confirmEmail", ['hash' => $token->getHash()], true),
+                            'user'=>$user
+                        ]);
+
+            $mailer->send($email);
 
             return $this->redirectToRoute('security_login');
        
@@ -142,4 +161,49 @@ class SecurityController extends AbstractController
      * @Route("/deconnexion", name="security_logout")
      */
     public function logout(){}
+
+    
+
+    /**
+     * @Route("/security/confirmEmail/{hash}", methods={"GET"}, name="security_confirmEmail")
+     */
+    public function confirmEmail(Token $token, EntityManagerInterface $manager)
+    {
+        $user = $token->getUserObjInToken();
+
+        $user->setConfirmEmail(true); 
+
+        $manager->persist($user);
+
+        //We delete the token in BDD
+        $manager->remove($token);
+        $manager->flush();
+
+
+        return $this->redirectToRoute('home');
+    }
+
+
+    
+    /**
+     * Use for try to send Email
+     * @Route("/email", name="security_email")
+     */
+    public function email(MailerInterface $mailer)
+    {
+        $email = (new TemplatedEmail())
+                    ->from("no-reply@p6-symfony.numeriquesimple.fr")
+                    ->to("antonin.pfistner@gmail.com")
+                    ->subject("Test Email")
+                    // ->text("Envoyer un mail c'est cool !")
+                    // ->html("<h1>Titre H1 test</h1><br><p>Je suis une paragraphe</p>");
+                    ->htmlTemplate('security/email/email_signIn.html.twig')
+                    ->context([
+                        'username'=>'Antonin'
+                    ]);
+        $mailer->send($email);
+
+        return $this->redirectToRoute('home');
+    }
+
 }
