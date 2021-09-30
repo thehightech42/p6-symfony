@@ -2,7 +2,7 @@
 
 {% block body %}
     <div class="row justify-content-center mt-5 ">
-        <div class="col-lg-2 m-auto">
+        <div class="col-lg-3 m-auto">
             <h1>Connexion</h1>
             <form action="{{ path('security_login') }}" method="POST">
                 <div class="form-group">
@@ -10,9 +10,12 @@
                 </div>
                 <div class="form-group">
                     <input type="password" required placeholder="Mot de passe" class="form-control" name="_password">
+                    <small><a href="{{ path("security_forgotPassword") }}">Mot de passe oublié ? </a> </small>
+                    <br>
                 </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">Connexion</button>
+                    <br>
                     <p>Pas encore <a href="{{ path("security_registration") }}"> inscrit ?</a> </p>
                 </div>
             </form>

@@ -140,7 +140,6 @@ class FigureController extends AbstractController
      */
     public function figure(Figure $figure): Response
     {
-        dump($figure);
         return $this->render('figure/index.html.twig', [
             'controller_name' => 'FigureController',
             'figure'=>$figure

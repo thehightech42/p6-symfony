@@ -9,15 +9,16 @@
     <div class="row justify-content-center mt-5">
         <div class="col-lg-8">
 
+            <h1 class="text-center mb-3">{{ figure.title }}</h1>
             {# Gestion du slider d'images #}
             <div class="slideshow-container">
                 <div class="row">
-                    {# {% if app.user %} #}
+                    {% if app.user %}
                         <div class="col-lg-12 text-right mb-2">
                             <a class="btn btn-primary" href="{{path('editFigure', {'id':figure.id} )}}">Edit</a>
                             <a class="btn btn-primary" id="deleteButton" href="{{path('deleteFigure', {'id':figure.id} )}}">Supprimer</a>
                         </div>
-                    {# {% endif %} #}
+                    {% endif %}
                 </div>
 
                 {% if figure.visuelFigures is defined and figure.visuelFigures is not null and figure.visuelFigures|length > 0 %}
