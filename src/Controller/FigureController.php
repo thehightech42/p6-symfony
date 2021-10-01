@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Figure;
+use App\Entity\Comment;
 use App\Entity\GroupeFigure;
 use App\Entity\VisuelFigure;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\VisuelFigureRepository;
+use App\Repository\CommentRepository;
+use App\Repository\FigureRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -138,10 +141,21 @@ class FigureController extends AbstractController
     /**
      * @Route("/figure/{slug}", name="figure")
      */
-    public function figure(Figure $figure): Response
+    public function figure(Figure $figure, Request $request, EntityManagerInterface $manager): Response
     {
+        if($request->request->get('comment') !== null){
+            $comment = new Comment;
+            
+            $comment->setValue($request->request->get('comment'));
+            $comment->setUser($this->getUser());
+            $comment->setCreateAt(new \DateTime);
+            $comment->setFigure($figure);
+
+            $manager->persist($comment); 
+            $manager->flush();
+        }
+
         return $this->render('figure/index.html.twig', [
-            'controller_name' => 'FigureController',
             'figure'=>$figure
         ]);
     }
@@ -164,18 +178,69 @@ class FigureController extends AbstractController
     /**
      * @Route("/figure/ajax/addGroupeFigure", name="addGroupeFigure")
      */
+    public function addGroupeFigure( Request $request, EntityManagerInterface $manager) 
+    {
+       $groupe = new GroupeFigure(); 
+       $groupe->setTitle($request->get('title')); 
+       $groupe->setDescription($request->get('description'));
 
-     public function addGroupeFigure( Request $request, EntityManagerInterface $manager) 
-     {
-        $groupe = new GroupeFigure(); 
-        $groupe->setTitle($request->get('title')); 
-        $groupe->setDescription($request->get('description'));
-
-        $manager->persist($groupe);
-        $manager->flush();
+       $manager->persist($groupe);
+       $manager->flush();
         
-        $jsonData['id'] = $groupe->getId();  
+       $jsonData['id'] = $groupe->getId();  
+
+       return new JsonResponse($jsonData);
+    }
+
+    /**
+     * @Route("figure/ajax/comment", name="ajaxCommentPagination")
+     */
+    public function ajaxCommentPagination(Request $request, EntityManagerInterface $manager, FigureRepository $repoFigure, CommentRepository $repoComment ): Response
+    {
+        // On récupère le slug et la "page"
+        $slugFigure = (string) $_POST['figure'];
+        $blockElement = $_POST['blockElement'];
+
+        //Je cherche la figure
+        $figuresArray = $repoFigure->findBy(['slug'=>$slugFigure]);
+
+        // var_dump($figuresArray[0]);
+        // $figureUse = $figure[0];
+        $nbElementsGet = 8;
+        $indexStart = 0 + ( $nbElementsGet * $blockElement );
+
+        //On cherche l'ensemble des commentaires via une requette
+        // $comments = $figure->getComments();
+        $comments = $repoComment->findByFigureIdPagination($figuresArray[0]->getId(), $nbElementsGet, $indexStart);
+
+        $countElementsGet = count($comments);
+        $endComments = false; 
+
+        if($countElementsGet < $nbElementsGet){
+            $endComments = true;
+        }
+
+        $jsonData = [];
+        $jsonComments = [];
+
+        for($i = 0; $i < count($comments); $i++){
+            $comment = $comments[$i]; 
+        
+            $data = [
+                'user'=>$comment->getUser()->getUsername(), 
+                'value'=>$comment->getValue(),
+                'created_at'=>$comment->getCreateAt()
+            ];
+            array_push($jsonComments, $data); 
+
+        }
+
+        if( count($jsonComments) > 0){
+            $jsonData['comments'] = $jsonComments;
+        }
+        
+        $jsonData['endData'] = $endComments;
 
         return new JsonResponse($jsonData);
-     }
+    }
 }
