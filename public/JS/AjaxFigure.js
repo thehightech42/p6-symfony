@@ -12,7 +12,7 @@ class AjaxFigure{
 
     requette(){
         // console.log('requette ' + this.page)
-        $.ajax({
+        jQuery.ajax({
             type: "POST",
             async: true, 
             url : this.url,

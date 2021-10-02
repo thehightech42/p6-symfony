@@ -14,6 +14,11 @@
     opacity: 1;
 }
 
+.rowPersoDot{
+    display: -webkit-box;
+    overflow: scroll;
+}
+
 /* Next & previous buttons */
 .prev, .next {
     cursor: pointer;
