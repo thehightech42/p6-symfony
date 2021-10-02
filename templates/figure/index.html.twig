@@ -49,10 +49,10 @@
             </div>
 
             {# Gestion des dots #}
-            <div style="text-align:center" class="row mt-3 ml-0 mr-0 justify-content-between">
+            <div style="" class="rowPersoDot mt-3 ml-0 mr-0 ">
         
                 {# On place en premier la main puis les autres #}
-                <div class="dot-img col-lg-2" onclick="currentSlide(1)" style="background-image:url( {{ asset(figure.mainVisuel.url) }}"></div>
+                <div class="dot-img" onclick="currentSlide(1)" style="background-image:url( {{ asset(figure.mainVisuel.url) }}"></div>
                 
 
                 {% set index = 2 %}
@@ -60,9 +60,9 @@
 
                     {% if visuelFigure.id != figure.mainVisuel.id %}
                         {% if visuelFigure.type == "picture" %}
-                            <div class="dot-img col-lg-2" onclick="currentSlide({{index}})" style="background-image:url( {{ asset(visuelFigure.url) }}"></div>
+                            <div class="dot-img" onclick="currentSlide({{index}})" style="background-image:url( {{ asset(visuelFigure.url) }}"></div>
                         {% else %}
-                            <div class="dot-img dotImgVideo col-lg-2" onclick="currentSlide({{index}})" style="background-image:url( {{asset(visuelFigure.url) }} )"></div>
+                            <div class="dot-img dotImgVideo" onclick="currentSlide({{index}})" style="background-image:url( {{asset(visuelFigure.url) }} )"></div>
                         {% endif %}
 
                     {% else %}
