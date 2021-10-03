@@ -33,29 +33,44 @@ class AjaxComment{
     usingData(jsonData){
         // console.log(jsonData);
         let blockComments = document.getElementById('comments');
-        
-        jsonData.comments.forEach(comment => {
-            let datePerso = new Date(comment.created_at.date);
-
-            let divComment = document.createElement('div'); 
-
-            let pNameValue = document.createElement('p');
-            pNameValue.textContent = comment.user + " - " + comment.value;
-            let br = document.createElement('br');
-            let pDate = document.createElement('p')
-            pDate.textContent = "Publié le : " + datePerso.toUTCString(); 
-
-            divComment.appendChild(pNameValue); 
-            divComment.appendChild(pDate); 
-            blockComments.appendChild(divComment);
-            blockComments.appendChild(br);
-        });
 
         if(jsonData.endData === true){
             this.button.style.display = "none";
         }else{
             this.blockElement += 1;
         }
+        // console.log(typeof jsonData.comments == undefined);
+        if(typeof jsonData.comments != "undefined"){
+            jsonData.comments.forEach(comment => {
+                let datePerso = new Date(comment.created_at.date);
+    
+                let divComment = document.createElement('div'); 
+    
+                let pNameValue = document.createElement('p');
+                pNameValue.textContent = comment.user + " - " + comment.value;
+                let br = document.createElement('br');
+                let pDate = document.createElement('p')
+                let optionsDate = { year: 'numeric', month: 'long', day: 'numeric' };
+                let dateFormat = datePerso.toLocaleString("fr-FR", optionsDate);
+                // pDate.textContent = "Publié le : " + datePerso.toUTCString();
+                pDate.textContent = "Publié le " + dateFormat; 
+    
+                divComment.appendChild(pNameValue); 
+                divComment.appendChild(pDate); 
+                blockComments.appendChild(divComment);
+                blockComments.appendChild(br);
+            });
+        }else if(this.blockElement === 0){
+            let divComment = document.createElement('div'); 
+            let paragrapheInfo = document.createElement('p');
+            paragrapheInfo.textContent = "Aucun message pour le moment. Soyer le premier à en écrire un !"
+
+            divComment.appendChild(paragrapheInfo);
+            blockComments.appendChild(divComment);
+        }
+        
+
+        
     }
     
     usingButton(){

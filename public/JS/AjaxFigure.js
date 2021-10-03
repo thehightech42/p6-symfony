@@ -35,7 +35,9 @@ class AjaxFigure{
         let blockComments = document.getElementById('figures');
         let stringAllFigures = "";
         jsonData.figures.forEach(figure => {
-            // console.log(figure);
+            let optionsDate ={ year: '2-digit', month: 'short', day: 'numeric' };
+            let dateFormat = new Date(figure.date.date).toLocaleString("fr-FR", optionsDate);
+            console.log(figure);
                 let htmlString = "";
                 htmlString += "<div class='col-lg-3 elementsFigure'><a href='"+ figure.path +"'>";
                 htmlString +=    "<div class='card text-white bg-dark mb-3'>";
@@ -47,7 +49,7 @@ class AjaxFigure{
                 }
                 // htmlString +=            "<h5 class='card-title'><a href=''></a></h5>";
                 htmlString +=            "<p class='card-text'>"+ figure.shortDescription +"</p>";
-                htmlString +=            "<p>Publié le x dans le groupe "+ figure.titleGroupe +"</p>";
+                htmlString +=            "<p>Publié le " + dateFormat + " dans le groupe "+ figure.titleGroupe +"</p>";
                 htmlString +=        "</div>";
                 htmlString +=    "</div>";
                 htmlString += "</a></div>";
