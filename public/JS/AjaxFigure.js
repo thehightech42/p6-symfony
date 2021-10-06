@@ -39,7 +39,7 @@ class AjaxFigure{
             let dateFormat = new Date(figure.date.date).toLocaleString("fr-FR", optionsDate);
             console.log(figure);
                 let htmlString = "";
-                htmlString += "<div class='col-lg-3 elementsFigure'><a href='"+ figure.path +"'>";
+                htmlString += "<div class='col-lg-3 mb-3 elementsFigure'><a href='"+ figure.path +"'>";
                 htmlString +=    "<div class='card bg-secondary mb-3'>";
                 htmlString +=        "<div class='card-header'><h5 class='card-title'>"+ figure.title +"</h5></div>";
                 htmlString +=        "<div class='card-body'>";
