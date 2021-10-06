@@ -32,7 +32,6 @@ class FigureController extends AbstractController
         if(!$figure ){
             $figure = new Figure;
         }
-                
         $formFigure = $this->createFormBuilder($figure)
                      ->add('groupe', EntityType::class, array(
                         'class'=> GroupeFigure::class,
@@ -57,41 +56,46 @@ class FigureController extends AbstractController
                 $figure->setUpdateAt(new \DateTime); 
             }
 
+            $firstImg = true;
             // Gestion de l'image principale
             if(isset($_POST['form']['mainVisuel2'])){
                 $int = (int) $_POST['form']['mainVisuel2'];
                 $newMainVisuel = $repoVisuelFigure->find($int);
                 $figure->setMainVisuel($newMainVisuel);
+                $firstImg = false;
             }
             $manager->persist($figure);
+
 
             //Gestions ajout des images  
             for($f = 1; $f <= count($_FILES); $f++){
                 $name = "inputGroupFile".strval($f);
-                $pathinfos = pathinfo($_FILES[$name]['tmp_name']);
 
                 $extension = explode('.', $_FILES[$name]['name']);
+                if($_FILES[$name]['size'] !== 0){
 
-                $baseName = 'uploads/img/'.md5(uniqid()).'.'.end($extension);
-                $newFileName = str_replace('\\', '/', $this->getParameter('upload_directory').'/'.$baseName);
-
-                try{
-                    move_uploaded_file($_FILES[$name]['tmp_name'], $newFileName);
-                }catch (\Execption $e) {
-                    var_dump('Error move');
+                    $baseName = 'uploads/img/'.md5(uniqid()).'.'.end($extension);
+                    $newFileName = str_replace('\\', '/', $this->getParameter('upload_directory').'/'.$baseName);
+    
+                    try{
+                        move_uploaded_file($_FILES[$name]['tmp_name'], $newFileName);
+                    }catch (\Execption $e) {
+                        var_dump('Error move');
+                    }
+    
+                    $newImg = new VisuelFigure();
+                    $newImg->setType('picture');
+                    $newImg->setUrl($baseName);
+                    $newImg->setFigure($figure);
+    
+                    $manager->persist($newImg);
+    
+                    if($firstImg === true ){
+                        $firstImg = false;
+                        $figure->setMainVisuel($newImg);
+                    }
                 }
-
-                $newImg = new VisuelFigure();
-                $newImg->setType('picture');
-                $newImg->setUrl($baseName);
-                $newImg->setFigure($figure);
-
-                $manager->persist($newImg);
-
-                if($f === 1 && $figure->getVisuelFigures()->isEmpty() ){
-
-                    $figure->setMainVisuel($newImg);
-                }
+                
 
             }
             
@@ -170,7 +174,9 @@ class FigureController extends AbstractController
     public function deleteFigure(Figure $figure, EntityManagerInterface $manager): Response
     {
         foreach($figure->getVisuelFigures() as $visuelFigure){
-            unlink($visuelFigure->getUrl());
+            if($visuelFigure->getType() === "picture"){
+                unlink($visuelFigure->getUrl());
+            }
         }
 
         $manager->remove($figure);
