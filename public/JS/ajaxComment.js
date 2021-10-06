@@ -42,8 +42,7 @@ class AjaxComment{
         // console.log(typeof jsonData.comments == undefined);
         if(typeof jsonData.comments != "undefined"){
             jsonData.comments.forEach(comment => {
-                let datePerso = new Date(comment.created_at.date);
-    
+                let datePerso = new Date(comment.created_at.date.replace(/\s/, 'T'));
                 let divComment = document.createElement('div'); 
     
                 let pNameValue = document.createElement('p');

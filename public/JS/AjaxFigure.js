@@ -36,8 +36,8 @@ class AjaxFigure{
         let stringAllFigures = "";
         jsonData.figures.forEach(figure => {
             let optionsDate ={ year: '2-digit', month: 'short', day: 'numeric' };
-            let dateFormat = new Date(figure.date.date).toLocaleString("fr-FR", optionsDate);
-            console.log(figure);
+            let dateFormat = new Date(figure.date.date.replace(/\s/, 'T')).toLocaleString("fr-FR", optionsDate); // OK hors safari
+
                 let htmlString = "";
                 htmlString += "<div class='col-lg-3 mb-3 elementsFigure'><a href='"+ figure.path +"'>";
                 htmlString +=    "<div class='card bg-secondary mb-3'>";
@@ -64,15 +64,11 @@ class AjaxFigure{
         if(jsonData.endData === true){
             this.button.style.display = "none";
         }else{
-            this.page ++;
-            console.log(this.page);
-            console.log(this.url);        
+            this.page ++;      
         }
     }
     
     usingButton(){
         this.button.addEventListener('click', this.requette.bind(this));
-        console.log('test usingButton');
-        console.log(this.page);
     }
 }
