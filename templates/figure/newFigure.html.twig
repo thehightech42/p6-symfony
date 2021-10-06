@@ -162,6 +162,11 @@
     {# <script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.4.25/jodit.min.js"></script> #}
     <script src="{{asset('JS/addInput.js')}}"></script>
     <script src="{{asset('JS/ajaxGroupe.js')}}"></script>    
-    {# <script type="text/javascript" src="https://cdn.tiny.cloud/1/xan0xqgn36elll0x9xwtm3pzch1knjm4m9byc6zt3iu7ogzn/tinymce/5/tinymce.min.js" breferrerpolicy="origin"></script> #}
-    {# <script src="{{ asset('js/importJodit.js') }}"></script> #}
+    <script type="text/javascript" src="https://cdn.tiny.cloud/1/xan0xqgn36elll0x9xwtm3pzch1knjm4m9byc6zt3iu7ogzn/tinymce/5/tinymce.min.js" breferrerpolicy="origin"></script>
+    <script>tinymce.init({
+      selector: '.WISIWYGEditor',
+      plugins: 'advlist autolink lists link charmap print preview hr anchor pagebreak',
+      toolbar_mode: 'floating',
+      height:"400"
+   });</script>
 {% endblock %}

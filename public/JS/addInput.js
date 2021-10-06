@@ -28,8 +28,8 @@ function addVideo(){
     videoElement++;
 }
 
-// Deleting Element
 
+// Deleting Element
 let deleteElement = 1; 
 let allElementsPictures = document.getElementsByClassName('imgAvailable');
 
@@ -58,7 +58,6 @@ function deleteFigure(idFigure, type){
 }
 
 
-
 // Modification de l'url pour les miniatures des vidéos. 
 function urlVideoToPicture(url){
     // console.log(typeof(url));
@@ -75,17 +74,3 @@ let arrayVideo = Array.prototype.slice.call(htmlCollectionVideo);
 arrayVideo.forEach( vid =>{
     vid.style.backgroundImage = urlVideoToPicture(vid.style.backgroundImage);
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
