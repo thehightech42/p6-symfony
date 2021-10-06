@@ -7,16 +7,8 @@ let blockHtml = $('#BlocInputVisuel');
 function addPicture(){
     console.log("Ajout d'une image")
     let htmlPicture = "<div class='form-group'>";
-    htmlPicture +=         "<label>Ajouter une photo</label>";
-    htmlPicture +=         "<div class='input-group mb-3'>";
-    htmlPicture +=              "<div class='custom-file'>";
-    htmlPicture +=                  "<input type='file' class='custom-file-input' name='inputGroupFile"+ pictureElement.toString() +"' id='inputGroupFile"+ pictureElement.toString() +"'>";
-    htmlPicture +=                  "<label class='custom-file-label' for='inputGroupFile"+ pictureElement.toString() +"'>Choisissez une photo</label>";
-    htmlPicture +=              "</div>";
-    htmlPicture +=          "<div class='input-group-append'>"
-    htmlPicture +=              "<span class='input-group-text'>Upload</span>";
-    htmlPicture +=          "</div>";
-    htmlPicture +=       "</div>";
+    htmlPicture +=       "<label for='inputGroupFile"+ pictureElement.toString() +"' class='form-label'>Ajouter une photo</label>";
+    htmlPicture +=       "<input type='file' name='inputGroupFile"+ pictureElement.toString() +"' class='form-control' id='inputGroupFile"+ pictureElement.toString() +"'>";
     htmlPicture +=    "</div>";
 
     blockHtml.append(htmlPicture);

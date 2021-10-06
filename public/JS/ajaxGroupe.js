@@ -41,6 +41,12 @@ buttonAddGroupe.addEventListener('click', (e)=>{
     ajax(title.value, description.value); 
     title.value = ""; 
     description.value = "";
+    $.toast({
+        heading: 'Success',
+        text: 'Le nouveau regroupe de figure à correctement était ajouté !',
+        showHideTransition: 'slide',
+        icon: 'success'
+    })
     modal.style.display = "none"; // Display none modal
     document.getElementsByClassName('modal-backdrop')[0].remove(); //Remove div with opacity
     document.getElementsByTagName('body')[0].classList.remove("modal-open"); // Remove classLite 
