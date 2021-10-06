@@ -40,12 +40,12 @@ class AjaxFigure{
             console.log(figure);
                 let htmlString = "";
                 htmlString += "<div class='col-lg-3 elementsFigure'><a href='"+ figure.path +"'>";
-                htmlString +=    "<div class='card text-white bg-dark mb-3'>";
+                htmlString +=    "<div class='card bg-secondary mb-3'>";
                 htmlString +=        "<div class='card-header'><h5 class='card-title'>"+ figure.title +"</h5></div>";
                 htmlString +=        "<div class='card-body'>";
                 
                 if( figure.mainVisuel !== 'undefined '){
-                    htmlString +=        "<img class='mainImgIndex' src='"+ figure.mainVisuel +"' alt=''>";
+                    htmlString +=        "<div class='img' style='background-image:url("+ figure.mainVisuel +");'></div>";
                 }
                 // htmlString +=            "<h5 class='card-title'><a href=''></a></h5>";
                 htmlString +=            "<p class='card-text'>"+ figure.shortDescription +"</p>";
