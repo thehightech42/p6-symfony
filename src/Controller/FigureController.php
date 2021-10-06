@@ -39,7 +39,7 @@ class FigureController extends AbstractController
                       )
                      ->add('title',TextType::class)
                      ->add('shortDescription',TextType::class)
-                     ->add('content', TextareaType::class)
+                     ->add('content', TextareaType::class, ['required'=>false])
                      ->add('save', SubmitType::class)
                      ->add('mainVisuel2')
                      ->getForm();
@@ -96,7 +96,6 @@ class FigureController extends AbstractController
                     }
                 }
                 
-
             }
             
 

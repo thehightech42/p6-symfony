@@ -3,7 +3,6 @@
 
 {% block stylesheet %}
     <link rel="stylesheet" href="{{asset('CSS/figures.css')}}">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jodit/3.4.25/jodit.min.css">
 {% endblock %}
 
 
@@ -52,7 +51,8 @@
             {{ form_row(formFigure.content, {
                 'attr':{
                     'placeholder' : 'Décrivez ici la figure. Les points de difficultés, ...  ;)',
-                    'class':'WISIWYGEditor'
+                    'class':'WISIWYGEditor',
+                    'novalidate':'novalidate'
                 },
                 'label' : 'Description de la figure' 
             }) }}
@@ -124,6 +124,8 @@
 
             {{form_end(formFigure) }}
 
+            {# <div id="editor"></div> #}
+
         </div>
     </div>
 
@@ -159,8 +161,19 @@
 
 
 {% block javascripts %}
-    {# <script src="//cdnjs.cloudflare.com/ajax/libs/jodit/3.4.25/jodit.min.js"></script> #}
+        <script src="https://cdn.tiny.cloud/1/xan0xqgn36elll0x9xwtm3pzch1knjm4m9byc6zt3iu7ogzn/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+
+        <script>
+            tinyMCE.init({
+                    selector: 'textarea',
+                    height:'400',
+                    plugins : "advlink"
+                });
+        </script>
         <script src="{{asset('JS/addInput.js')}}"></script>
         <script src="{{asset('JS/ajaxGroupe.js')}}"></script>
         <script src="{{asset('JS/deleteFigure.js')}}"></script>    
 {% endblock %}
+
+{# selector: 'textarea' #}
+{# selector: '.WISIWYGEditor' #}
