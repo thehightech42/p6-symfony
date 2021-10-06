@@ -27,18 +27,17 @@ use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route("/security", name="security")
-     */
-    public function index(): Response
+    private $requestStack;
+
+    public function __construct(RequestStack $requestStack)
     {
-        return $this->render('security/index.html.twig', [
-            'controller_name' => 'SecurityController',
-        ]);
+        $this->requestStack = $requestStack;
     }
+
 
     /**
      * @Route("/inscription", name="security_registration")
@@ -74,6 +73,16 @@ class SecurityController extends AbstractController
                         ]);
 
             $mailer->send($email);
+            $toast = [
+                'icon'=>'success',
+                'heading'=>'Success',
+                'text'=> 'Votre inscription a bien été enregistré. Un mail vous a été envoyé afin de confirmer votre email.',
+                'showHideTransition'=> 'slide',
+                'allowToastClose'=> 'true',
+                'hideAfter'=>'false',
+                'position'=>'bottom'
+            ];
+            $this->requestStack->getSession()->set('toast', json_encode($toast)); 
 
             return $this->redirectToRoute('security_login');
        
@@ -83,6 +92,35 @@ class SecurityController extends AbstractController
         ]);
 
     }
+
+    /**
+     * @Route("/connexion", name = "security_login")
+     */
+    public function login(Request $request): Response
+    {
+        if( $this->requestStack->getSession()->get('toast') !== null ){
+            $toast = $this->requestStack->getSession()->get('toast');
+            $this->requestStack->getSession()->remove('toast'); 
+            return $this->render('security/login.html.twig', ['toast'=>$toast]);
+        }else{
+            return $this->render('security/login.html.twig');
+        }
+        
+    }
+
+    /**
+     * @Route("/deconnexion", name="security_logout")
+     */
+    public function logout(){}
+
+
+    //           ___    ___     ____   _____   _____
+    //  |    |  |   |  |   \   |    |    |    |
+    //  |    |  |___|  |    |  |____|    |    |__
+    //  |    |  |      |    |  |    |    |    |
+    //  |____|  |      |___/   |    |    |    |_____
+    // 
+
     /**
      * @Route("/changer-nom-utilisateur", name="security_updateUsername")
      */
@@ -102,6 +140,16 @@ class SecurityController extends AbstractController
         if($formUser->isSubmitted() && $formUser->isValid() ){
             $manager->persist($user); 
             $manager->flush();
+            $toast = ['icon'=>'success',
+                    'heading'=>'Success',
+                    'text'=> "Votre nom d'utilisateur a bien été mis à jours.",
+                    'showHideTransition'=> 'slide',
+                    'allowToastClose'=> 'true',
+                    'hideAfter'=>'false',
+                    'position'=>'bottom'];
+                    return $this->render('security/updateUsername.html.twig', [
+                        'formUser'=>$formUser->createView(),
+                        'toast'=>json_encode($toast)]);
 
         }
 
@@ -139,42 +187,40 @@ class SecurityController extends AbstractController
         $oldPasswordCheck = true;
 
         if($formPassword->isSubmitted() && $formPassword->isValid()){
-            // var_dump($user);
             if($encoder->isPasswordValid($user, $user->oldPassword)){
                 $newPasswordHash = $encoder->encodePassword($user, $user->newPassword);
                 $user->setPassword($newPasswordHash); 
 
                 $manager->persist($user);
                 $manager->flush();
+                $toast = ['icon'=>'success',
+                    'heading'=>'Success',
+                    'text'=> 'Votre mot de passe a bien été modifié',
+                    'showHideTransition'=> 'slide',
+                    'allowToastClose'=> 'true',
+                    'hideAfter'=>'false',
+                    'position'=>'bottom'];
+                    return $this->render('security/updatePassword.html.twig', [
+                        'formPassword'=>$formPassword->createView(),
+                        'toast'=>json_encode($toast)]);
             }else{
-                // var_dump('false oldPassword');
-                //$oldPasswordCheck = false;
                 $formPassword->get('oldPassword')->addError(new FormError('Votre ancien mot de passe ne correspond pas'));
             }
         }
 
         return $this->render('security/updatePassword.html.twig', [
             'formPassword'=>$formPassword->createView(),
-            'oldPasswordCheck'=>$oldPasswordCheck
             ] 
         );
     }
 
 
-    /**
-     * @Route("/connexion", name = "security_login")
-     */
-    public function login(): Response
-    {
-        return $this->render('security/login.html.twig');
-    }
-
-    /**
-     * @Route("/deconnexion", name="security_logout")
-     */
-    public function logout(){}
-
-    
+    //   ____   _____         ______    ______
+    //  |      |     |       |      |  |      |
+    //  |__    |     |       |______|  |      |
+    //  |      |     |       |         |------|
+    //  |      |     |       |         |      |
+    //  |      |_____|       |         |      |
 
     /**
      * @Route("/security/confirmEmail/{hash}", methods={"GET"}, name="security_confirmEmail")
@@ -203,6 +249,16 @@ class SecurityController extends AbstractController
                     ]);
             
         $mailer->send($email);
+        $toast = [
+            'icon'=>'success',
+            'heading'=>'Success',
+            'text'=> 'Votre email a bien été confirmé !',
+            'showHideTransition'=> 'slide',
+            'allowToastClose'=> 'true',
+            'hideAfter'=>'false',
+            'position'=>'bottom'
+        ];
+        $this->requestStack->getSession()->set('toast', json_encode($toast)); 
 
         return $this->redirectToRoute('security_login');
     }
@@ -212,13 +268,15 @@ class SecurityController extends AbstractController
      */
     public function forgotPassword(Request $request, UserRepository $userRepo, TokenRepository $tokenRepo,  EntityManagerInterface $manager, MailerInterface $mailer)
     {
-        if( $request->request->get('emailFogot') !== null ){
+        $toast = null;
+        if( $request->request->get('emailFogot') !== null ){ //Controle de la requette
 
             $user = $userRepo->findBy(['email'=>$request->request->get('emailFogot')]);
             $user = $user[0];
-            if($user->getConfirmEmail() === true){
+            if($user->getConfirmEmail() === true){ // Si l'email est confirmé
 
                 $tokenExist = $tokenRepo->findBy(['user'=>$user]);
+
                 if(count($tokenExist) !== 0){
                     $oldToken = $tokenExist[0];
                     $this->removeToken($oldToken);
@@ -237,13 +295,26 @@ class SecurityController extends AbstractController
                                 'urlWithTokenFogotPassword'=> $this->generateUrl('security_resetPassword', ['hash' => $token->getHash()], UrlGeneratorInterface::ABSOLUTE_URL)
                             ]); 
                 $mailer->send($email);
+                $toast = ['icon'=>'success',
+                    'heading'=>'Success',
+                    'text'=> 'Un email de reintialisation de mot de passe vous a été envoyé. Pensez à regarder dans vos spams.',
+                    'showHideTransition'=> 'slide',
+                    'allowToastClose'=> 'true',
+                    'hideAfter'=>'false',
+                    'position'=>'bottom'];
+            }else{
+                $toast = ['icon'=>'error',
+                    'heading'=>'Echec',
+                    'text'=> "La reintialisation de mot de passe est impossible. Soit l'email saisi n'est lié à aucun compte ou celui ci n'a pas été confirmé.",
+                    'showHideTransition'=> 'slide',
+                    'allowToastClose'=> 'true',
+                    'hideAfter'=>'false',
+                    'position'=>'bottom'];
             }
-            else{
-                var_dump('Reinitialisation impossible');
-            }
+            return $this->render('security/forgotPassword.html.twig', ['toast'=>json_encode($toast)]);
         }
+        
         return $this->render('security/forgotPassword.html.twig');
-
     }
 
     public function removeToken(Token $token)
@@ -285,6 +356,17 @@ class SecurityController extends AbstractController
             $manager->persist($user);
             $manager->remove($token);
             $manager->flush();
+
+            $toast = [
+                'icon'=>'success',
+                'heading'=>'Success',
+                'text'=> 'Votre reinitialisation bien été effectué. Vous pouvez à présent vous connecter. ',
+                'showHideTransition'=> 'slide',
+                'allowToastClose'=> 'true',
+                'hideAfter'=>'false',
+                'position'=>'bottom'
+            ];
+            $this->requestStack->getSession()->set('toast', json_encode($toast)); 
             
            return $this->redirectToRoute('security_login');
 

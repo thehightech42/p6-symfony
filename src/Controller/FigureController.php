@@ -153,10 +153,14 @@ class FigureController extends AbstractController
 
             $manager->persist($comment); 
             $manager->flush();
+            $toast = ['icon'=>'success', 'heading'=>'Succés', 'text'=> 'Votre message a bien été pris en compte.', 'showHideTransition'=> 'fade',  'hideAfter'=>'3000'];
+            return $this->render('figure/index.html.twig', [
+                'figure'=>$figure, 
+                'toast'=>json_encode($toast)
+            ]);
         }
-
         return $this->render('figure/index.html.twig', [
-            'figure'=>$figure
+            'figure'=>$figure, 
         ]);
     }
 
