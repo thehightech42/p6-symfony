@@ -24,7 +24,7 @@
                 {% if figure.visuelFigures is defined and figure.visuelFigures is not null and figure.visuelFigures|length > 0 %}
                     {# On place en premier l'image principale #}
                     <div class="mySlides fade">
-                        <img src="{{ asset(figure.mainVisuel.url) }}" alt="" style="width:100%">
+                        <img src="{{ asset(figure.mainVisuel.url) }}" alt="">
                     </div>
                 
                 {# On ajoute les autres images sans remettre l'image principale #}
@@ -35,11 +35,10 @@
                             <div class="mySlides fade">
                                 {# <embed src="{{ asset(visuelFigure.url) }}" type="video/webm" style="width:100%; min-height:600px; height:60%;"> #}
                                 <iframe src="{{ asset(visuelFigure.url) }}" frameborder="0" width="100" height="600"></iframe>
-                                {# <img src="{{ asset(visuelFigure.url) }}" style="width:100%" > #}
                             </div>
                         {% else %}
                             <div class="mySlides fade">
-                                <img src="{{ asset(visuelFigure.url) }}" style="width:100%" >
+                                <img src="{{ asset(visuelFigure.url) }}">
                             </div>
                         {% endif %}
                         

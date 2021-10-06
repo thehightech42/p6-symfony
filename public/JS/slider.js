@@ -25,7 +25,7 @@ function showSlides(n) { // Fonction d'affichage de la slide en cours
   for (i = 0; i < dots.length; i++) { /// boucle pour retirer toutes class active possible des dotes
       dots[i].className = dots[i].className.replace(" active", "");
   }
-  slides[slideIndex-1].style.display = "block";  // On passe en display block la slide en cours
+  slides[slideIndex-1].style.display = "flex";  // On passe en display block la slide en cours
   dots[slideIndex-1].className += " active"; // On ajoute la classe active à la dot utilisé
 }
 
