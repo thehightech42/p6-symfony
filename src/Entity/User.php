@@ -38,8 +38,8 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Regex(
-     *     pattern     = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/i",
-     *     message = " Votre mot de passe doit contenir 8 caractères au minimun avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
+     *     pattern     = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-=+_]).{8,}$/i",
+     *     message = "Votre mot de passe doit contenir au moins 8 caractères avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.( @$!%*?& )"
      * )
      */
     private $password;
@@ -48,8 +48,8 @@ class User implements UserInterface
 
     /**
      * @Assert\Regex(
-     *     pattern     = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}/i",
-     *     message = " Votre mot de passe doit contenir 8 caractères au minimun avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial."
+     *     pattern     = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-=+_]).{8,}$/i",
+     *     message = "Votre mot de passe doit contenir au moins 8 caractères avec au moins une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.( @$!%*?& )"
      * )
      */
     public $newPassword;
