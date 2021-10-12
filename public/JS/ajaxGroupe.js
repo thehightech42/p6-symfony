@@ -16,11 +16,14 @@ function ajax(title, description){
         if (req.status >= 200 && req.status < 400) {
             console.log("Bingo !");
             console.log(JSON.parse(this.responseText));
+
             let data = JSON.parse(this.responseText);
+            // On crée l'option
             let option = document.createElement('option'); 
             option.setAttribute('selected', 'selected'); 
             option.value = data.id;
             option.textContent = title; 
+            // On ajoute l'option
             selectGroupe.appendChild(option);
         } else {
             console.error("Error : " + req.status + " " + req.statusText);

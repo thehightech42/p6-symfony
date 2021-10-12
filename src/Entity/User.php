@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Finder\Finder;
 use App\Repository\UserRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -64,10 +65,10 @@ class User implements UserInterface
      */
     private $comments;
 
-    public function __construct()
-    {
-        $this->comments = new ArrayCollection();
-    }
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $avatar;
 
     
 
@@ -136,6 +137,9 @@ class User implements UserInterface
 
     public function eraseCredentials(){}
 
+
+
+
     /**
      * @return Collection|Comment[]
      */
@@ -166,7 +170,17 @@ class User implements UserInterface
         return $this;
     }
 
-    
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
 
 
 }

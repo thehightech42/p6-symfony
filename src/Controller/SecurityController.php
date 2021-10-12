@@ -5,6 +5,8 @@ namespace App\Controller;
 use DateTime;
 use App\Entity\User;
 use App\Entity\Token;
+use App\Form\UpdateUserType;
+use App\Service\GestionFile;
 use App\Form\RegistrationType;
 use Symfony\Component\Mime\Email;
 use App\Repository\UserRepository;
@@ -20,6 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
@@ -28,6 +31,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SecurityController extends AbstractController
 {
@@ -122,41 +126,111 @@ class SecurityController extends AbstractController
     // 
 
     /**
-     * @Route("/changer-nom-utilisateur", name="security_updateUsername")
+     * @Route("/mon-compte", name="security_updateUser")
      */
     public function updateUsername(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder): Response
     {
         $user = $this->getUser();
 
         //Form user information
-        $formUser = $this->createFormBuilder($user)
-                        ->add('username', TextType::class)
-                        ->add('email', EmailType::class, ['attr'=> ['readonly'=>'true']])
-                        ->add('save', SubmitType::class)
-                        ->getForm(); 
+        $formUser = $this->createForm(UpdateUserType::class, $user); 
 
         $formUser->handleRequest($request);
         
         if($formUser->isSubmitted() && $formUser->isValid() ){
-            $manager->persist($user); 
+
+            $avatar = $formUser->get('imageAvatar')->getData(); 
+            if($avatar){
+                // On crée un nom unique
+                $newFileName = md5(uniqid()) . '-avatar' . '.'.$avatar->guessExtension();
+                // On déplace l'image sur le serveur
+                $avatar->move($this->getParameter('upload_directory') . '/uploads/img', $newFileName);
+
+                //Si un avatar existe on le supprime avant d'en ajouter un autre. 
+                if($user->getAvatar() !== null){
+                    unlink($this->getParameter('upload_directory').'/uploads/img/'.$user->getAvatar());
+                }
+                // On ajoute la nouvelle image d'avatar
+                $user->setAvatar($newFileName);
+            }
+            $manager->persist($user);
             $manager->flush();
             $toast = ['icon'=>'success',
                     'heading'=>'Success',
-                    'text'=> "Votre nom d'utilisateur a bien été mis à jours.",
+                    'text'=> "Vos informations ont correctement été mis à jours.",
                     'showHideTransition'=> 'slide',
                     'allowToastClose'=> 'true',
                     'hideAfter'=>'false',
-                    'position'=>'bottom'];
-                    return $this->render('security/updateUsername.html.twig', [
-                        'formUser'=>$formUser->createView(),
-                        'toast'=>json_encode($toast)]);
-
+                    'position'=>'bottom'
+            ];
+            return $this->render('security/updateUserInformation.html.twig', [
+                'formUser'=>$formUser->createView(),
+                'user'=>$user,
+                'toast'=>json_encode($toast)]);
         }
 
-        return $this->render('security/updateUsername.html.twig', [
-            'formUser'=>$formUser->createView()
+        return $this->render('security/updateUserInformation.html.twig', [
+            'user'=>$user,
+            'formUser'=>$formUser->createView() 
             ] 
         );
+    }
+    /**
+     * @Route("/security/ajax/removeAvatarPerso", name="remove-avatar-perso", methods={"POST"})
+     */
+    public function removeAvatarPerso(Request $request, EntityManagerInterface $manager)
+    {
+        // $data = $request->get('_token');
+        // var_dump($data);
+        $controlToken = $this->isCsrfTokenValid('deleteAvatar', $request->get('_token'));
+        // var_dump($controlToken);
+        if($controlToken){
+            // Je récupère l'utilisateur
+            $user = $this->getUser();
+            // On passe l'avatar à Null 
+            $user->setAvatar(null);
+            // On prépare le changement
+            $manager->flush($user); 
+            // On fait persister
+            $manager->persist(); 
+
+            // On renvoi l'information que tout c'est bien passé
+            return new JsonResponse(['success'=>true]);
+
+        }else{
+            return new JsonResponse(['success'=>false]);
+        }
+    }
+
+    /**
+     * @Route("/security/ajax/removeAvatar", name="remove-avatar", methods={"DELETE"})
+     */
+    public function removeAvatar(Request $request, EntityManagerInterface $manager)
+    {
+        $data = json_decode($request->getContent(), true); 
+        $return['success'] = false;
+
+        $controlToken = $this->isCsrfTokenValid('deleteAvatar', $data['_token']);
+        // var_dump($controlToken);
+        if($controlToken){
+            // Je récupère l'utilisateur
+            $user = $this->getUser();
+            // On supprime l'image
+            unlink('uploads/img/'.$user->getAvatar());
+            // On passe l'avatar à Null 
+            $user->setAvatar(null);
+            // On prépare l'enregistrement
+            $manager->persist($user); 
+            // On execute définitvement
+            $manager->flush(); 
+            $return['success'] = true;
+
+            // On renvoi l'information que tout c'est bien passé
+            return new JsonResponse($return);
+
+        }else{
+            return new JsonResponse($return);
+        }
     }
 
 

@@ -24,16 +24,23 @@
                             'placeholder' : 'Votre nom visible sur le site'
                         }
                     }) }}
-                    {{ form_row(formUser.save, {
-                        'label' : 'Enregistrer les changements',  
-                        'attr' : {
-                            'class' : 'btn btn-info'
-                        }
-                    }) }}
+                    {% if user.avatar is not null %}
+                        <div class="row" id="divImgAvatar">
+                            <div class="col-lg-3">
+                                <img src="{{ asset('uploads/img/' ~ user.avatar)}}" alt="" style="width:250px">
+                            </div>
+                            <div class="col-lg-2">
+                                <a href="{{path('remove-avatar')}}" data-token="{{ csrf_token('deleteAvatar') }}" class="btn btn-primary">Supprimer la photo d'avatar</a>
+                            </div>
+                        </div>
+                    {% endif %}
                     {{form_end(formUser)}}
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
 
+{% block javascripts %}
+    <script src="{{ asset('JS/removeAvatar.js') }}"></script>
 {% endblock %}

@@ -6,6 +6,7 @@ use App\Entity\Figure;
 use App\Entity\Comment;
 use App\Entity\GroupeFigure;
 use App\Entity\VisuelFigure;
+use App\Service\GestionFile;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\VisuelFigureRepository;
 use App\Repository\CommentRepository;
@@ -39,7 +40,7 @@ class FigureController extends AbstractController
                       )
                      ->add('title',TextType::class)
                      ->add('shortDescription',TextType::class)
-                     ->add('content', TextareaType::class, ['required'=>false])
+                     ->add('content', TextareaType::class)
                      ->add('save', SubmitType::class)
                      ->add('mainVisuel2')
                      ->getForm();
@@ -71,23 +72,13 @@ class FigureController extends AbstractController
             for($f = 1; $f <= count($_FILES); $f++){
                 $name = "inputGroupFile".strval($f);
 
-                $extension = explode('.', $_FILES[$name]['name']);
                 if($_FILES[$name]['size'] !== 0){
 
-                    $baseName = 'uploads/img/'.md5(uniqid()).'.'.end($extension);
-                    $newFileName = str_replace('\\', '/', $this->getParameter('upload_directory').'/'.$baseName);
-    
-                    try{
-                        move_uploaded_file($_FILES[$name]['tmp_name'], $newFileName);
-                    }catch (\Execption $e) {
-                        var_dump('Error move');
-                    }
+                    $fileGestion = new GestionFile; 
+                    $fileGestion->move($_FILES[$name], $this->getParameter('upload_directory')); 
     
                     $newImg = new VisuelFigure();
-                    $newImg->setType('picture');
-                    $newImg->setUrl($baseName);
-                    $newImg->setFigure($figure);
-    
+                    $newImg->setType('picture')->setUrl($fileGestion->getPath())->setFigure($figure);
                     $manager->persist($newImg);
     
                     if($firstImg === true ){

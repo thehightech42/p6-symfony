@@ -52,7 +52,6 @@
                 'attr':{
                     'placeholder' : 'Décrivez ici la figure. Les points de difficultés, ...  ;)',
                     'class':'WISIWYGEditor',
-                    'novalidate':'novalidate'
                 },
                 'label' : 'Description de la figure' 
             }) }}
@@ -161,15 +160,6 @@
 
 
 {% block javascripts %}
-        <script src="https://cdn.tiny.cloud/1/xan0xqgn36elll0x9xwtm3pzch1knjm4m9byc6zt3iu7ogzn/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-
-        <script>
-            tinyMCE.init({
-                    selector: 'textarea',
-                    height:'400',
-                    plugins : "advlink"
-                });
-        </script>
         <script src="{{asset('JS/addInput.js')}}"></script>
         <script src="{{asset('JS/ajaxGroupe.js')}}"></script>
         <script src="{{asset('JS/deleteFigure.js')}}"></script>    
