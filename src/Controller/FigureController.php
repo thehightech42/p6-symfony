@@ -7,6 +7,7 @@ use App\Entity\Comment;
 use App\Entity\GroupeFigure;
 use App\Entity\VisuelFigure;
 use App\Service\GestionFile;
+use App\Form\ControlFigureType;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\VisuelFigureRepository;
 use App\Repository\CommentRepository;
@@ -21,115 +22,136 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class FigureController extends AbstractController
 {
     /**
-     * @Route("/figure/newFigure", name="newFigure")
-     * @Route("/figure/edit/{id}", name="editFigure")
+     * @Route("/figure/newFigure", name="newFigure");
+     * @Route("/figure/edit/{id}", name="editFigure") 
      */
-    public function newFigure(Figure $figure = null, Request $request, EntityManagerInterface $manager, VisuelFigureRepository $repoVisuelFigure): Response
+    public function controlFigure(Figure $figure = null, Request $request, EntityManagerInterface $manager, VisuelFigureRepository $repoVisuelFigure): Response
     {
-        if(!$figure ){
+        // On initialiser une entité figure si c'est une nouvelle.
+        if(!$figure){
             $figure = new Figure;
         }
-        $formFigure = $this->createFormBuilder($figure)
-                     ->add('groupe', EntityType::class, array(
-                        'class'=> GroupeFigure::class,
-                        'choice_label'=> 'title')
-                      )
-                     ->add('title',TextType::class)
-                     ->add('shortDescription',TextType::class)
-                     ->add('content', TextareaType::class)
-                     ->add('save', SubmitType::class)
-                     ->add('mainVisuel2')
-                     ->getForm();
-
+        // On crée le formulaire
+        $formFigure = $this->createForm(ControlFigureType::class, $figure);
+        // On analyse la requette
         $formFigure->handleRequest($request);
-
+        // Si le form est soumis et valide
         if($formFigure->isSubmitted() && $formFigure->isValid()){
 
             // Gestion des dates d'ajout et de mise à jour
             if(!$figure->getId()){
-                $figure->setCreateAt(new \DateTime);
-                $figure->setUpdateAt(new \DateTime); 
+                $figure->setCreateAt(new \DateTime); // On ajoute la date de création
+                $figure->setUpdateAt(new \DateTime); // On ajoute la date de mise à jours
             }else{
-                $figure->setUpdateAt(new \DateTime); 
+                $figure->setUpdateAt(new \DateTime); // On change la date de mise à jours si c'est un update
             }
 
-            $firstImg = true;
-            // Gestion de l'image principale
-            if(isset($_POST['form']['mainVisuel2'])){
-                $int = (int) $_POST['form']['mainVisuel2'];
-                $newMainVisuel = $repoVisuelFigure->find($int);
-                $figure->setMainVisuel($newMainVisuel);
-                $firstImg = false;
+            // Gestion de l'image principale en cas d'update
+            $formMainVisuel = $formFigure->get('mainVisuelSelect')->getData();
+            if( $formMainVisuel !== false ){
+                $figure->setMainVisuel($repoVisuelFigure->find(intval($formMainVisuel)));
             }
+
+            // On fait persiter la figure
             $manager->persist($figure);
 
-
-            //Gestions ajout des images  
-            for($f = 1; $f <= count($_FILES); $f++){
-                $name = "inputGroupFile".strval($f);
-
-                if($_FILES[$name]['size'] !== 0){
-
-                    $fileGestion = new GestionFile; 
-                    $fileGestion->move($_FILES[$name], $this->getParameter('upload_directory')); 
-    
-                    $newImg = new VisuelFigure();
-                    $newImg->setType('picture')->setUrl($fileGestion->getPath())->setFigure($figure);
-                    $manager->persist($newImg);
-    
-                    if($firstImg === true ){
-                        $firstImg = false;
-                        $figure->setMainVisuel($newImg);
+            // Analyse du champ picturesVisuel
+            $picturesVisuel = $formFigure->get('picturesVisuel')->getData();
+            if($picturesVisuel !== "null"){ // Si c'est différent de nul
+                foreach($picturesVisuel as $picture){ // On crée une boucle sur les données 
+                    $pictureVisuel = new VisuelFigure; // Je crée une nouvelle entité VisuelFigure 
+                    $pictureVisuel->typeAndMove('picture', $picture, $this->getParameter('upload_directory'))->setFigure($figure); // Justilise la méthode interné crée
+                    $manager->persist($pictureVisuel); // On fait persiter 
+                    if($figure->getMainVisuel() == null && $picture == $picturesVisuel[0]){ // Si c'est la première image
+                        $figure->setMainVisuel($pictureVisuel); // On la défini comme principale
                     }
                 }
-                
             }
-            
 
-            // Gestion de l'ajout des vidéos
-            $strAddVideo = 'inputVideoUrl';
-            $i = 1;
-            while( isset( $_POST[$strAddVideo.strval($i)] ) ){
-                $newLink ="";
-                $regex = '/https:\/\/(?:youtu\.com\/|(?:[a-z]{2,3}\.)?youtube\.com\/watch(?:\?|#\!)v=)([\w-]{11}).*/';
-                if (preg_match($regex, $_POST[$strAddVideo.strval($i)], $matches)) {
-                    $id = explode("=", $_POST[$strAddVideo.strval($i)]);
-                    $newLink = "https://www.youtube.com/embed/".end($id);
-
-                    $video = new VisuelFigure;
-                    $video->setType('video');
-                    $video->setUrl($newLink); 
-                    $video->setFigure($figure); 
-                    $manager->persist($video);
+            // Analyse du champ vidéo
+            $videos = $formFigure->get('videosVisuels')->getData();
+            $regex = '/https:\/\/(?:youtu\.com\/|(?:[a-z]{2,3}\.)?youtube\.com\/watch(?:\?|#\!)v=)([\w-]{11}).*/';
+            if (preg_match_all($regex, $videos, $arrayListeVideo, PREG_PATTERN_ORDER)) {
+                $videoArray = [];
+                foreach($arrayListeVideo[0] as $element){
+                    $videosExplode = explode(" ", $element);
+                    if(count($videosExplode) > 1 ){
+                        foreach($videosExplode as $aloneVideo){
+                            array_push($videoArray, $aloneVideo);
+                        }
+                    }else{
+                        array_push($videoArray, $element);
+                    }
                 }
-                $i++;
+                if(count($videoArray) > 0){
+                    foreach($videoArray as $url){
+                        $video = new VisuelFigure;
+                        $video->typeAndMove('video', $url)->setFigure($figure);
+                        $manager->persist($video);
+                    }
+
+                }
             }
 
-            // Suppression des images
-            $strDeleteElement = 'deleteElement';
-            $e = 1;
-            while( isset($_POST[$strDeleteElement.strval($e)]) ){
-                $idFigureToDelete = (int) $_POST[$strDeleteElement.strval($e)];
-                $visuelElementDelete = $repoVisuelFigure->find($idFigureToDelete);
-                if($visuelElementDelete->getType() === "picture"){
-                    unlink($visuelElementDelete->getUrl());
-                }
-                $manager->remove($visuelElementDelete);
-                $e++; 
-            }
-            // Faire sauver en BDD
+
+            // On flush
             $manager->flush();
             return $this->redirectToRoute('figure', ['slug'=>$figure->getSlug()] );
         }
-
-        return $this->render('figure/newFigure.html.twig', [
-            'formFigure'=>$formFigure->createView(),
+        return $this->render('figure/controlFigure.html.twig', [
+            'formFigure'=>$formFigure->createView(), 
             'figure'=>$figure
         ]);
+
+    }
+    
+    /**
+     * @Route("/figure/ajax/removeVisuelPicture", name="removeAjaxPicture")
+     * @Method({"DELETE"})
+     */
+    public function deleteAjaxVisuelFigure(Request $request, EntityManagerInterface $manager, VisuelFigureRepository $repoVisuelFigure)
+    {
+        //On décode les données
+        $data = json_decode($request->getContent(), true);
+
+            if($this->isCsrfTokenValid('deleteVisuelFigure' . $data['_idVisuelFigure'], $data['_token'])){
+
+                // On cherche l'entité visuelFigure
+                $visuelFigureArray = $repoVisuelFigure->findBy(['id'=>$data['_idVisuelFigure']]);
+                $visuelFigure = $visuelFigureArray[0];
+                // Si c'est une image on la supprime du serveur
+                if($visuelFigure->getType() === "picture"){
+                    if($visuelFigure->getFigure()->getMainVisuel() == $visuelFigure){
+                        $return['isMain'] = true;
+                        foreach($visuelFigure->getFigure()->getVisuelFigures() as $visuelFigureInCollection){
+                            if($visuelFigureInCollection !== $visuelFigure && $visuelFigureInCollection->getType() == "picture"){
+                                $visuelFigure->getFigure()->setMainVisuel($visuelFigureInCollection);
+                                $return['newMain'] = $visuelFigureInCollection->getId();
+                            }
+                        }
+                    } 
+                    unlink($visuelFigureArray[0]->getUrl());
+                }
+
+                // On remove dans la BDD
+                $manager->remove($visuelFigureArray[0]);
+
+                $manager->flush();
+                // Reponse AJAX
+                $return['success'] = true;
+                return new JsonResponse($return);
+            }else{
+                // Reponse AJAX
+                $return['success'] = false;
+                return new JsonResponse($return);
+            }
+       
+        return new JsonResponse($return);
     }
 
     /**
@@ -148,12 +170,12 @@ class FigureController extends AbstractController
             $manager->persist($comment); 
             $manager->flush();
             $toast = ['icon'=>'success', 'heading'=>'Succés', 'text'=> 'Votre message a bien été pris en compte.', 'showHideTransition'=> 'fade',  'hideAfter'=>'3000'];
-            return $this->render('figure/index.html.twig', [
+            return $this->render('figure/readFigure.html.twig', [
                 'figure'=>$figure, 
                 'toast'=>json_encode($toast)
             ]);
         }
-        return $this->render('figure/index.html.twig', [
+        return $this->render('figure/readFigure.html.twig', [
             'figure'=>$figure, 
         ]);
     }

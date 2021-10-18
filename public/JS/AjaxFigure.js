@@ -43,8 +43,10 @@ class AjaxFigure{
                 htmlString +=    "<div class='card bg-secondary mb-3'>";
                 htmlString +=        "<div class='card-header'><h5 class='card-title'>"+ figure.title +"</h5></div>";
                 htmlString +=        "<div class='card-body'>";
-                
-                if( figure.mainVisuel !== 'undefined '){
+                console.log(figure.mainVisuel);
+                if( figure.mainVisuel == undefined){
+                    htmlString +=        "<div class='img' style='background-image:url(/IMG/snowboard.jpg);'></div>";
+                }else{
                     htmlString +=        "<div class='img' style='background-image:url("+ figure.mainVisuel +");'></div>";
                 }
                 // htmlString +=            "<h5 class='card-title'><a href=''></a></h5>";

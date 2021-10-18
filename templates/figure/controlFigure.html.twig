@@ -1,0 +1,141 @@
+{% extends 'base.html.twig' %}
+{% form_theme formFigure 'bootstrap_4_layout.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{asset('CSS/figures.css')}}">
+{% endblock %}
+
+
+{% block body %}
+    <div class="row mt-5">
+        <div class="col-lg-10 m-auto text-center">
+        {% if figure.title == "" %}
+            <h1>Ajouter une nouvelle figure</h1> 
+        {% else %}
+            <h1>Modifier la figure : {{figure.title}}</h1> 
+        {% endif %}
+        </div>
+    </div>
+
+    
+
+    <div class="row">
+        <div class="col-lg-10 m-auto">
+
+        {{  form_start(formFigure) }}
+        {% do formFigure.mainVisuelSelect.setRendered() %}
+
+            {{ form_row(formFigure.groupe) }}
+            <!-- Button modal ajout nouveau groupe -->
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAddGroupeFigure">
+                    Ajouter un nouveau groupe
+                </button>
+            </div>
+            {{ form_row(formFigure.title) }}
+
+            {{ form_row(formFigure.shortDescription) }}
+
+            {{ form_row(formFigure.content) }}
+
+            {% if figure.title == "" %}
+                {{ form_row(formFigure.picturesVisuel) }}
+            {% else %}
+                {{ form_row(formFigure.picturesVisuel, {
+                'attr':{
+                    'required' : ''
+                } 
+            }) }}
+            {% endif %}
+            
+            {{ form_row(formFigure.videosVisuels) }}
+
+            {# {{ form(formFigure) }} #}
+
+            {% if figure.visuelFigures is defined and figure.visuelFigures is not empty %}
+                    <div class="form-group">
+                        <label for="">Sélection de la photo de couverture : </label>
+                        <div class="row">
+                        {% for visuelFigure in figure.visuelFigures %}
+                            {% if visuelFigure.type != "video" %}
+                                <div class="col-lg-3 imgAvailable" id="col-{{visuelFigure.id}}">
+                                    <input type="radio" class="btn-check hidden inputVisuelFigureImg" name="control_figure[mainVisuelSelect]" id="{{visuelFigure.id}}" value="{{visuelFigure.id}}" autocomplete="off" 
+                                    {% if visuelFigure.id == figure.mainVisuel.id %}
+                                    checked 
+                                    {% endif %}
+                                    >
+                                    <label class="imgLabelFigure" style="background-image:url( {{ asset(visuelFigure.url) }} );" for="{{visuelFigure.id}}"></label>
+                                    <a href="{{path('removeAjaxPicture')}}" data-delete="{{visuelFigure.id}}" data-token="{{ csrf_token('deleteVisuelFigure' ~ visuelFigure.id) }}" data-type="{{visuelFigure.type}}">
+                                        <i class="fas fa-trash fa-2x"></i>
+                                    </a>
+                                </div> 
+                            {% endif %}    
+                        {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="">Gestion des vidéos : </label>
+                        <div class="row">
+                        {% for visuelFigure in figure.visuelFigures %}
+                            {% if visuelFigure.type == "video" %}
+                                <div class="col-lg-3 videoAvailable" id="col-{{visuelFigure.id}}">
+                                    <div class="videoLabelFigure checkVideo" style="display: inline-block; background-image:url( {{ asset(visuelFigure.url) }} );"></div>
+                                    <a href="{{path('removeAjaxPicture')}}" data-delete="{{visuelFigure.id}}" data-token="{{ csrf_token('deleteVisuelFigure' ~ visuelFigure.id) }}" data-type="{{visuelFigure.type}}">
+                                        <i class="fas fa-trash fa-2x"></i>
+                                    </a>
+                                    
+                                </div> 
+                            {% endif %}    
+                        {% endfor %}
+                        </div>
+                    </div>
+            {% else %}
+                <input type="hidden" name="control_figure[mainVisuelSelect]" value="false">
+            {% endif %}
+
+        {{ form_end(formFigure) }}
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="modalAddGroupeFigure" tabindex="-1" role="dialog" aria-labelledby="modalAddGroupeFigureLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAddGroupeFigureLabel">Ajouter un nouveau groupe de figure</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <input type="text" id="titleGroupe" class="form-control" placeholder="Titre du groupe">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="descriptionGroupe" class="form-control" placeholder="Description du groupe">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btnAddGroupe">Ajouter</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body %}
+
+{% block javascripts %}
+        <script src="{{asset('JS/addInput.js')}}"></script>
+        <script src="{{asset('JS/ajaxGroupe.js')}}"></script>
+        <script src="{{asset('JS/deleteVisuelFigure.js')}}"></script>
+        <script>
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.removeAttribute('required');
+            })
+        </script>
+{% endblock %}

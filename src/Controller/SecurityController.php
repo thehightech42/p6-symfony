@@ -175,32 +175,6 @@ class SecurityController extends AbstractController
             ] 
         );
     }
-    /**
-     * @Route("/security/ajax/removeAvatarPerso", name="remove-avatar-perso", methods={"POST"})
-     */
-    public function removeAvatarPerso(Request $request, EntityManagerInterface $manager)
-    {
-        // $data = $request->get('_token');
-        // var_dump($data);
-        $controlToken = $this->isCsrfTokenValid('deleteAvatar', $request->get('_token'));
-        // var_dump($controlToken);
-        if($controlToken){
-            // Je récupère l'utilisateur
-            $user = $this->getUser();
-            // On passe l'avatar à Null 
-            $user->setAvatar(null);
-            // On prépare le changement
-            $manager->flush($user); 
-            // On fait persister
-            $manager->persist(); 
-
-            // On renvoi l'information que tout c'est bien passé
-            return new JsonResponse(['success'=>true]);
-
-        }else{
-            return new JsonResponse(['success'=>false]);
-        }
-    }
 
     /**
      * @Route("/security/ajax/removeAvatar", name="remove-avatar", methods={"DELETE"})

@@ -56,7 +56,7 @@
                 'label' : 'Description de la figure' 
             }) }}
             
-            {% if figure.visuelFigures is defined %}
+            {% if figure.visuelFigures is defined and figure.visuelFigures is not empty %}
                     <div class="form-group">
                         <label for="">Sélection de la photo de couverture : </label>
                         <div class="row">
@@ -79,7 +79,7 @@
                 </div>
             {% endif %}
 
-            {% if figure.visuelFigures is defined %}
+            {% if figure.visuelFigures is defined and figure.visuelFigures is not empty %}
                     <div class="form-group">
                         <label for="">Gestion des vidéos : </label>
                         <div class="row">
@@ -154,7 +154,7 @@
             </div>
             </div>
         </div>
-        </div>
+    </div>
 
 {% endblock %}
 

@@ -33,6 +33,7 @@ class VisuelFigure
      */
     private $url;
 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -72,5 +73,31 @@ class VisuelFigure
         $this->url = $url;
 
         return $this;
+    }
+
+    public function typeAndMove(string $type, $file, $pathDirectory = null)
+    {
+        // On ajoute le type
+        $this->setType($type);
+
+        if($type === 'picture'){
+            // On essaie de déplacer le fichier.
+            try{
+                $newPathAndNameFile = 'uploads/img/picture-' . md5( uniqid() ) . '.' .$file->guessExtension();
+                $file->move($pathDirectory .'/uploads/img', $newPathAndNameFile);
+                $this->setUrl($newPathAndNameFile);
+                return $this;
+            }catch (FileException $e) {
+                return false;
+            }
+        }else if($type === 'video'){
+            
+            $id = explode("=", $file);
+            $newLinkVideo = "https://www.youtube.com/embed/".end($id);
+            $this->setUrl($newLinkVideo);
+            return $this;
+        }
+        
+
     }
 }

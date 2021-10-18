@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{{asset('CSS/figures.css')}}">
+    <link rel="stylesheet" href="{{ asset('CSS/slider.css') }}">
+{% endblock %}
+
+{% block body %}
+
+ <div class="row justify-content-center mt-5">
+    <div class="col-lg-8">
+        <h1 class="text-center mb-3">{{ figure.title }}</h1>
+        {# Gestion de la figure #}
+        <div class="slideshow-container">
+            <div class="row">
+                {% if app.user %}
+                    <div class="col-lg-12 text-right mb-2">
+                        <a class="btn btn-primary" href="{{path('editFigure', {'id':figure.id} )}}">Edit</a>
+                        <a class="btn btn-primary" id="deleteButton" href="{{path('deleteFigure', {'id':figure.id} )}}">Supprimer</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# On place l'image de remplacement #}
+            {% if figure.mainVisuel == null %}
+                <div class="mySlides fade">
+                    <img src="/IMG/snowboard.jpg" alt="">
+                </div>
+            {# Sinon on place l'image principale #}
+            {% else %}
+                <div class="mySlides fade">
+                    <img src="{{ asset(figure.mainVisuel.url) }}" alt="">
+                </div>
+            {% endif %}
+
+            {# Si on a plusieurs visuel #}
+            {% if figure.visuelFigures|length > 1 %}
+                {# On blouble sur les visuel #}
+                {% for visuelFigure in figure.visuelFigures %}
+                    {% if (figure.mainVisuel == null) or (visuelFigure.id != figure.mainVisuel.id) %}
+                        <div class="mySlides fade">
+                            {% if visuelFigure.type == "video" %}
+                                <iframe src="{{ asset(visuelFigure.url) }}" frameborder="0" width="100" height="600"></iframe>
+                            {% else %}
+                                <img src="{{ asset(visuelFigure.url) }}">
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                {# On place les boutons dans le container et si on a plusieurs visuelFigure #}
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            {% endif %}
+            
+        {# Fermeture slideshow container #}
+        </div>
+
+        {# On ajoute les dots si c'est #}
+        {% if figure.visuelFigures|length > 1 %}
+            <div class="rowPersoDot mt-3 ml-0 mr-0 ">
+    
+                {# On place en premier la main puis les autres #}
+                {% if figure.mainVisuel == null %}
+                    <div class="dot-img col-lg-2" onclick="currentSlide(1)" style="background-image:url(/IMG/snowboard.jpg)"></div>
+                {% else %}
+                    <div class="dot-img col-lg-2" onclick="currentSlide(1)" style="background-image:url( {{ asset(figure.mainVisuel.url) }} )"></div>
+                {% endif %}
+                
+                    {% set index = 2 %}
+                    {% for visuelFigure in figure.visuelFigures %}
+
+                        {% if (figure.mainVisuel == null) or (visuelFigure.id != figure.mainVisuel.id) %}
+                            {% if visuelFigure.type == "picture" %}
+                                <div class="dot-img col-lg-2" onclick="currentSlide({{index}})" style="background-image:url( {{ asset(visuelFigure.url) }} "></div>
+                            {% else %}
+                                <div class="dot-img dotImgVideo col-lg-2" onclick="currentSlide({{index}})" style="background-image:url( {{asset(visuelFigure.url) }}"></div>
+                            {% endif %}
+
+                        {% else %}
+                            {% set index = index - 1 %}
+                        {% endif %}
+                        {% set index = index + 1 %}
+                    {% endfor %}
+            </div>
+        {% endif %}
+
+
+        {# Texte de la figure #}
+        <div class="row justify-content-center mt-3 mb-5">
+            <div class="col-lg-12">
+                {{figure.content | raw}}
+            </div>
+        </div>
+
+        {# Gestion des informations #}
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <div class="row justify-content-between">
+                    <div class="col-lg-3 text-left">
+                        <p>Crée le {{figure.createAt | date('d-m-Y') }}</p>
+                    </div>
+                    <div class="col-lg-3 text-center">
+                        <p>Groupe : {{figure.groupe.title}}</p>
+                    </div>
+                    <div class="col-lg-3 text-right">
+                        <p>Modifié :{{ figure.updateAt | date('d-m-Y') }} </p>
+                    </div>
+                </div>
+            </div>  
+        </div>
+
+        {# Affichage des options des messages en fonction de si on est connecté ou pas #}
+        {% if app.user %}
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-12">
+                    <form action="{{path("figure",{'slug': figure.slug} )}}" method="POST">
+                        <div class="form-group">
+                            <textarea name="comment" id="commentTextareaId" class="form-control" placeholder="Votre commentaire"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary"> Participer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+        <div class="row justify-content-center">
+            <div class="col-lg-12">
+                <h4>Il faut être connecté afin de participer à la discussion.</h4>
+                <div class="row">
+                    <div class="col-lg-10">
+                        <a href="{{path('security_login')}}"><button class="btn btn-success">Connexion</button></a>
+                        <a href="{{path('security_registration')}}"><button  class="btn btn-primary">Inscription</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Affichage des messages #}
+        <div class="row justify-content-center mt-5">
+            <div class="col-lg-12">
+                <h4>Messages</h4>
+                <div class="col-lg-12 pl-0" id="comments">
+                </div>
+                <button class="btn btn-outline-primary" id="buttonSeeMoreComments">Voir plus</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('JS/slider.js') }}"></script>
+    <script src="{{ asset('JS/ajaxComment.js') }}"></script>
+    <script src="{{ asset('JS/deleteFigure.js') }}"></script>
+    <script>
+        let comment = new AjaxComment('{{ path("ajaxCommentPagination") }}', 'buttonSeeMoreComments');
+    </script>
+{% endblock %}

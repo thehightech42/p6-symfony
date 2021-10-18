@@ -11,6 +11,7 @@ function currentSlide(n) {
 }
 
 function showSlides(n) { // Fonction d'affichage de la slide en cours
+  console.log(n);
   var i; // On crée une variable i utilisé pour l'index des boucles
   var slides = document.getElementsByClassName("mySlides"); // On crée la variables slide qui contiendra toutes les slides
   var dots = document.getElementsByClassName("dot-img"); // On crée la variables dots qui contiendra toutes les dots. 
@@ -25,7 +26,7 @@ function showSlides(n) { // Fonction d'affichage de la slide en cours
   for (i = 0; i < dots.length; i++) { /// boucle pour retirer toutes class active possible des dotes
       dots[i].className = dots[i].className.replace(" active", "");
   }
-  slides[slideIndex-1].style.display = "flex";  // On passe en display block la slide en cours
+  slides[slideIndex-1].style.display = "flex";  // On passe en display flex la slide en cours
   dots[slideIndex-1].className += " active"; // On ajoute la classe active à la dot utilisé
 }
 

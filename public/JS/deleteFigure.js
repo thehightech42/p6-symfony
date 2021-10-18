@@ -1,5 +1,22 @@
-// Controle avant suppression
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Controle avant suppression
 // Deleting Element
 let deleteElement = 1; 
 let allElementsPictures = document.getElementsByClassName('imgAvailable');
