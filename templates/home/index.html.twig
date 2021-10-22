@@ -5,17 +5,28 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row rowHome mt-5 mb-5">
-        <div class="col-lg-12 text-center">
-            <h1>Bienvenue sur SnowTricks</h1>
-            <h3>Le site spécialisés sur les figures de Snowboards</h3>
+    <div id="homeImg" class="row rowHome mb-5 align-items-center justify-content-end">
+        <div class="container">
+            <div class="row align-items-center justify-content-center">
+                <div class="col-lg-6">
+                    <h1>Bienvenue sur SnowTricks</h1>
+                    <h3>Le site spécialisés sur les figures de Snowboards</h3>
+                    
+                </div>
+            </div>
+            {# <div class="row align-items-end justify-content-end">
+                <div class="col-lg-2 ">
+                    
+                </div>
+            </div> #}
+            <a href="#contentFigure" id="buttonContentFigure" class="btn btn-light">Figure</a>
         </div>
     </div>
     <div class="row w-75 m-auto justify-content-center mt-5">
     <div class="row w-100"  id="figures">
         {# On place ici les figures #}
     </div>
-    <div class="row">
+    <div id="contentFigure" class="row">
         <div class="col-lg-12 m-auto">
         <button id="seeMoreFigure" class="btn btn-primary">Voir plus</button>
         </div>

@@ -1,0 +1,18 @@
+#homeImg{
+    background-image: url('/IMG/snowboardFond.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 100%;
+    height: 100vh;
+}
+
+.row{
+    margin:0 !important;
+}
+
+#buttonContentFigure{
+    position: absolute;
+    bottom: 0.5%;
+    right: 0.5%;
+}
