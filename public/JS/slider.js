@@ -47,3 +47,13 @@ console.log(arrayVideo);
 arrayVideo.forEach( vid =>{
     vid.style.backgroundImage = urlVideoToPicture(vid.style.backgroundImage);
 })
+
+// GESTION MOBILE DES DOTS
+let buttonShow = document.getElementById('buttonShowSlideInMobile');
+let divShow = document.getElementById('divShowSlideInMobile');
+let rowDots = document.getElementById('rowDots')
+buttonShow.addEventListener('click', (e)=>{
+  buttonShow.style.display = "none"; 
+  // rowDots.style.display = "block ruby";
+  rowDots.style.display = "-webkit-box";
+});

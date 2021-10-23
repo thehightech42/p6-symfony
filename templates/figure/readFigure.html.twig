@@ -57,7 +57,7 @@
 
         {# On ajoute les dots si c'est #}
         {% if figure.visuelFigures|length > 1 %}
-            <div class="rowPersoDot mt-3 ml-0 mr-0 ">
+            <div id="rowDots" class="rowPersoDot mt-3 ml-0 mr-0 ">
     
                 {# On place en premier la main puis les autres #}
                 {% if figure.mainVisuel == null %}
@@ -83,6 +83,10 @@
                     {% endfor %}
             </div>
         {% endif %}
+
+        <div class="row justify-content-center mt-3" id="divShowSlideInMobile">
+            <div class="col-lg-2 text-center"><button id="buttonShowSlideInMobile"class="btn btn-primary">Afficher les images</button></div>
+        </div>
 
 
         {# Texte de la figure #}

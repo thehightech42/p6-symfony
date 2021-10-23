@@ -122,6 +122,12 @@ div.mySlides.fade iframe{
 
 @media screen and (max-width: 980px) {
     .rowPersoDot{
-        display: -webkit-box;
+        display: none;
     }
-  }
+    #divShowSlideInMobile{
+        display:flex !important;
+    }
+}
+#divShowSlideInMobile{
+    display:none;
+}

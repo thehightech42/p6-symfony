@@ -21,6 +21,9 @@
 
     <div class="row">
         <div class="col-lg-10 m-auto">
+            <div class="col-lg-12 text-right mb-2">
+                <a class="btn btn-primary" id="deleteButton" href="{{path('deleteFigure', {'id':figure.id} )}}">Supprimer</a>
+            </div>
 
         {{  form_start(formFigure) }}
         {% do formFigure.mainVisuelSelect.setRendered() %}
