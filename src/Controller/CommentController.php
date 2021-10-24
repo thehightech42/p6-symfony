@@ -28,8 +28,8 @@ class CommentController extends AbstractController
     }
 
     /**
-     * @Route("/delete-comment/{id}", name="deleteComment")
-     * @Method({"DELETE"})
+     * @Route("/comment/delete-comment/{id}", name="deleteComment")
+     * @Method({"POST"})
      */
     public function deleteComment(Request $request, Comment $comment, EntityManagerInterface $manager) :Response
     {
@@ -42,6 +42,34 @@ class CommentController extends AbstractController
             $manager->remove($comment);
 
             $manager->flush();
+            // Reponse AJAX
+            $return['success'] = true;
+            return new JsonResponse($return);
+        }else{
+            // Reponse AJAX
+            $return['success'] = false;
+            return new JsonResponse($return);
+        }
+    }
+
+    /**
+     * @Route("/comment/update-comment/{id}", name="updateComment")
+     * @Method({"UPDATE"})
+     */
+     public function updateComment(Request $request, Comment $comment, EntityManagerInterface $manager) :Response
+     {
+        //On décode les données
+        $data = json_decode($request->getContent(), true);
+
+        if($this->isCsrfTokenValid('updateComment' . $comment->getId(), $data['_token'])){
+
+            // Change la value du commentaire
+            $comment->setValue($data['value']);
+
+            // On fait persister
+            $manager->persist($comment);
+            $manager->flush();
+
             // Reponse AJAX
             $return['success'] = true;
             return new JsonResponse($return);

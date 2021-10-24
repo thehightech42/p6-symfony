@@ -1,6 +1,4 @@
-let comments = document.getElementsByClassName('deleteComment');
-console.log(comments);
-for(let comment of comments){
+for(let comment of document.getElementsByClassName('deleteComment')){
     comment.addEventListener('click', (e)=>{
         e.preventDefault();
         if(confirm('Etes-vous sur de vouloir supprimer ce commentaire ? ')){

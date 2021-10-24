@@ -21,10 +21,11 @@
                 <tbody>
                     {% for comment in user.comments %}
                         <tr id="comment-{{ comment.id }}" class="table-light">
-                            <th scope="row">{{ comment.figure.title }}</th>
-                            <td>{{ comment.value }}</td>
+                            <th scope="row"><a href="{{ path('figure', {'slug':comment.figure.slug}) }}">{{ comment.figure.title }}</a></th>
+                            <td id="commentValue-{{comment.id}}">{{ comment.value }}</td>
                             <td>{{ comment.createAt | date('d-m-Y') }}</td>
-                            <td><button class="btn btn-info">Modifier</button></td>
+                            <td><a data-target="#modalUpdateComment" data-toggle="modal" class="btn btn-info updateComment"
+                            href="{{path('updateComment', {'id':comment.id}) }}" data-token="{{ csrf_token('updateComment'~ comment.id) }}" data-id="{{comment.id}}">Modifier</a></td>
                             <td><a class="btn btn-danger deleteComment" href="{{path('deleteComment', {'id':comment.id}) }}" data-token="{{ csrf_token('deleteComment'~ comment.id) }}" data-id="{{comment.id}}">Supprimer</a></td>
                         </tr>
                     {% endfor %}
@@ -33,8 +34,32 @@
         </div>
     </div>
 
+
+
+    <div class="modal" id="modalUpdateComment">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modification du commentaire</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="textareaModal" cols="50" rows="3"></textarea>
+            </div>
+            <div class="modal-footer">
+                <a href="" id="saveUpdateComment" class="btn btn-primary">Sauvegarder les modifications</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
 
 {% block javascripts %}
     <script src="{{asset('JS/comment/AjaxDeleteComment.js')}}"></script>
+    <script src="{{asset('JS/comment/AjaxUpdateComment.js')}}"></script>
 {% endblock %}

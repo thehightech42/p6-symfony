@@ -1,7 +1,7 @@
 let buttonAddGroupe = document.getElementById('btnAddGroupe'); 
 let title = document.getElementById('titleGroupe');
 let description = document.getElementById('descriptionGroupe'); 
-let selectGroupe = document.getElementById('form_groupe');
+let selectGroupe = document.getElementById('control_figure_groupe');
 let modal = document.getElementById('modalAddGroupeFigure');
 
 function ajax(title, description){
@@ -46,7 +46,7 @@ buttonAddGroupe.addEventListener('click', (e)=>{
     description.value = "";
     $.toast({
         heading: 'Success',
-        text: 'Le nouveau regroupe de figure à correctement était ajouté !',
+        text: 'Le nouveau groupe de figure à correctement était ajouté !',
         showHideTransition: 'slide',
         icon: 'success'
     })
