@@ -36,6 +36,7 @@
                         </li>
                         
                         {% if not app.user %}
+                        {# {% if not is_granted('IS_AUTHENTICATED_FULLY') %} #}
                             <li class="nav-item inscription">
                                 <a class="nav-link " href="{{ path('security_registration') }}">Inscription</a>
                             </li>

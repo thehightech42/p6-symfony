@@ -22,7 +22,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class FigureController extends AbstractController
 {
@@ -111,8 +110,7 @@ class FigureController extends AbstractController
     }
     
     /**
-     * @Route("/figure/ajax/removeVisuelPicture", name="removeAjaxPicture")
-     * @Method({"DELETE"})
+     * @Route("/figure/ajax/removeVisuelPicture", name="removeAjaxPicture", methods={"DELETE"})
      */
     public function deleteAjaxVisuelFigure(Request $request, EntityManagerInterface $manager, VisuelFigureRepository $repoVisuelFigure)
     {

@@ -29,9 +29,10 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
@@ -46,7 +47,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/inscription", name="security_registration")
      */
-    public function registration(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder, MailerInterface $mailer){
+    public function registration(Request $request, EntityManagerInterface $manager, MailerInterface $mailer, UserPasswordHasherInterface $passwordHasher){
 
         $user = new User;
 
@@ -54,7 +55,7 @@ class SecurityController extends AbstractController
 
         $form->handleRequest($request); 
         if ($form->isSubmitted() && $form->isValid() ) {
-            $hash = $encoder->encodePassword($user, $user->getPassword()); 
+            $hash = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hash); 
             $user->setConfirmEmail(false);
 
@@ -100,7 +101,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/connexion", name = "security_login")
      */
-    public function login(Request $request): Response
+    public function login(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
         if( $this->requestStack->getSession()->get('toast') !== null ){
             $toast = $this->requestStack->getSession()->get('toast');
@@ -128,7 +129,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/mon-compte", name="security_updateUser")
      */
-    public function updateUsername(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder): Response
+    public function updateUsername(Request $request, EntityManagerInterface $manager): Response
     {
         $user = $this->getUser();
 
@@ -211,7 +212,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/changer-mot-de-passe", name="security_updatePassword")
      */
-    public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder): Response
+    public function updatePassword(Request $request, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = $this->getUser();
 
@@ -236,7 +237,7 @@ class SecurityController extends AbstractController
 
         if($formPassword->isSubmitted() && $formPassword->isValid()){
             if($encoder->isPasswordValid($user, $user->oldPassword)){
-                $newPasswordHash = $encoder->encodePassword($user, $user->newPassword);
+                $newPasswordHash = $passwordHasher->hashPassword($user, $user->newPassword);
                 $user->setPassword($newPasswordHash); 
 
                 $manager->persist($user);
@@ -376,7 +377,7 @@ class SecurityController extends AbstractController
     /**
      * @Route("/security/reinitialisation-de-mot-passe/{hash}", name="security_resetPassword")
      */
-    public function resetPassword(Request $request, Token $token, EntityManagerInterface $manager, UserPasswordEncoderInterface $encoder)
+    public function resetPassword(Request $request, Token $token, EntityManagerInterface $manager, UserPasswordHasherInterface $passwordHasher)
     {
         $user = $token->getUserObjInToken();
 
@@ -398,7 +399,7 @@ class SecurityController extends AbstractController
 
         if($formResetPassword->isSubmitted() && $formResetPassword->isValid()){
 
-            $newPasswordHash = $encoder->encodePassword($user, $user->newPassword);
+            $newPasswordHash = $passwordHasher->hashPassword($user, $user->newPassword);
             $user->setPassword($newPasswordHash); 
 
             $manager->persist($user);

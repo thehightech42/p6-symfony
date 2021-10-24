@@ -9,6 +9,7 @@ use Symfony\Component\Finder\Finder;
 use App\Repository\UserRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
@@ -16,7 +17,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity("email", message = "L'email saisi est déjà lié à un compte.")
  * @UniqueEntity("username", message = "Une personne utilise déjà ce nom d'utilisateur")
  */
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Id
@@ -87,6 +88,11 @@ class User implements UserInterface
         $this->email = $email;
 
         return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 
     public function getUsername(): ?string
