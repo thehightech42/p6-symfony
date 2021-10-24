@@ -174,9 +174,16 @@ class Figure
 
     public function convertTitleToSlug($title)
     {
-
-        $slug = strtolower(str_replace(" ", "_", $title));
-
+        $arrayCharNotValid = ["?","!","'","{","}","(",")","[","]","@","$","*","+","/","|","\\","%","=","§","µ","£","#","&","^","°","~",";",":",",","¤","\"",".","<",">"];
+        $slug = strtolower(str_replace($arrayCharNotValid, "", $title));
+        $slug = str_replace(" ", "-", $slug);
+        $slug = str_replace("é", "e", $slug);
+        $slug = str_replace("è", "e", $slug);
+        $slug = str_replace("ê", "e", $slug);
+        $slug = str_replace("à", "a", $slug);
+        $slug = str_replace("â", "a", $slug);
+        $slug = str_replace("ç", "c", $slug);
+        $slug = iconv("UTF-8", "ISO-8859-1//TRANSLIT", $slug);
         return $slug;
     }
 

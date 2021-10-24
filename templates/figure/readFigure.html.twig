@@ -159,6 +159,7 @@
 
 {% block javascripts %}
     <script src="{{ asset('JS/figure/slider.js') }}"></script>
+    <script src="{{ asset('JS/figure/controleBeforeDelete.js') }}"></script>
     <script src="{{ asset('JS/comment/AjaxGetComment.js') }}"></script>
     <script>
         let comment = new AjaxComment('{{ path("ajaxCommentPagination") }}', 'buttonSeeMoreComments');
