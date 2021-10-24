@@ -16,3 +16,16 @@
     bottom: 0.5%;
     right: 0.5%;
 }
+
+/* Page Commentaire */
+@media screen and (max-width: 980px) {
+    .container-table{
+        overflow-x: scroll;
+    }
+}
+
+
+#textareaModal{
+    width: 100%;
+    max-width: 100%;
+}
