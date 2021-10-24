@@ -21,9 +21,11 @@
 
     <div class="row">
         <div class="col-lg-10 m-auto">
+        {% if figure.title != ""%}
             <div class="col-lg-12 text-right mb-2">
                 <a class="btn btn-primary" id="deleteButton" href="{{path('deleteFigure', {'id':figure.id} )}}">Supprimer</a>
             </div>
+        {% endif %}
 
         {{  form_start(formFigure) }}
         {% do formFigure.mainVisuelSelect.setRendered() %}
@@ -133,9 +135,9 @@
 {% endblock body %}
 
 {% block javascripts %}
-        <script src="{{asset('JS/addInput.js')}}"></script>
-        <script src="{{asset('JS/ajaxGroupe.js')}}"></script>
-        <script src="{{asset('JS/deleteVisuelFigure.js')}}"></script>
+        <script src="{{asset('JS/figure/changeUrlVideoForThumbnail.js')}}"></script>
+        <script src="{{asset('JS/figure/ajaxAddGroupe.js')}}"></script>
+        <script src="{{asset('JS/figure/deleteVisuelFigure.js')}}"></script>
         <script>
             document.querySelectorAll('input[type="file"]').forEach(input => {
                 input.removeAttribute('required');

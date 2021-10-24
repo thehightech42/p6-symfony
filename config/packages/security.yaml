@@ -43,4 +43,5 @@ security:
          - { path: ^/figure/newFigure, roles: ROLE_USER }
          - { path: ^/figure/edit/[0-9], roles: ROLE_USER }
          - { path: ^/figure/delete/[0-9], roles: ROLE_USER } 
+         - { path: ^/mes-commentaires , roles: ROLE_USER } 
          

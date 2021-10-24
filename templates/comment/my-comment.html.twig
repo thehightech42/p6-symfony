@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes commentaires{% endblock %}
+
+{% block body %}
+    <div class="row mt-5">
+        <div class="col-lg-12 text-center"><h1>Mes commentaires</h1></div>
+    </div>
+    <div class="row  justify-content-center mt-5">
+        <div class="col-lg-10">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="table-secondary">
+                        <th scope="col">Nom de l'artible</th>
+                        <th scope="col">Commentaire</th>
+                        <th scope="col">Date de publication</th>
+                        <th scope="col">Modifier</th>
+                        <th scope="col">Supprimer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comment in user.comments %}
+                        <tr id="comment-{{ comment.id }}" class="table-light">
+                            <th scope="row">{{ comment.figure.title }}</th>
+                            <td>{{ comment.value }}</td>
+                            <td>{{ comment.createAt | date('d-m-Y') }}</td>
+                            <td><button class="btn btn-info">Modifier</button></td>
+                            <td><a class="btn btn-danger deleteComment" href="{{path('deleteComment', {'id':comment.id}) }}" data-token="{{ csrf_token('deleteComment'~ comment.id) }}" data-id="{{comment.id}}">Supprimer</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{asset('JS/comment/AjaxDeleteComment.js')}}"></script>
+{% endblock %}

@@ -159,7 +159,7 @@ class FigureController extends AbstractController
      */
     public function figure(Figure $figure, Request $request, EntityManagerInterface $manager): Response
     {
-        if($request->request->get('comment') !== null){
+        if($request->request->get('comment') !== null && $this->isCsrfTokenValid('add-message', $request->request->get('_token'))){
             $comment = new Comment;
             
             $comment->setValue($request->request->get('comment'));
@@ -174,9 +174,11 @@ class FigureController extends AbstractController
                 'figure'=>$figure, 
                 'toast'=>json_encode($toast)
             ]);
+            
         }
+
         return $this->render('figure/readFigure.html.twig', [
-            'figure'=>$figure, 
+            'figure'=>$figure
         ]);
     }
 
@@ -227,12 +229,10 @@ class FigureController extends AbstractController
         $figuresArray = $repoFigure->findBy(['slug'=>$slugFigure]);
 
         // var_dump($figuresArray[0]);
-        // $figureUse = $figure[0];
         $nbElementsGet = 8;
         $indexStart = 0 + ( $nbElementsGet * $blockElement );
 
         //On cherche l'ensemble des commentaires via une requette
-        // $comments = $figure->getComments();
         $comments = $repoComment->findByFigureIdPagination($figuresArray[0]->getId(), $nbElementsGet, $indexStart);
 
         $countElementsGet = count($comments);
